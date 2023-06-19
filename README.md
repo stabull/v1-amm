@@ -1,160 +1,42 @@
-# Basic Hardhat Project Boilerplate
+# Stabull
 
-> This smart-contracts-development-boilerplate is mostly based on hardhat and includes foundry fuzz-testing feature.
+## Table of Contents
 
-## Prerequisites
+- [Project Description](#project-description)
+- [Technologies Used](#technologies-used)
+- [Folder Structure](#folder-structure)
+- [Install and Run](#install-and-run)
+- [Documentation](#documentation)
 
-- Install [foundry](https://book.getfoundry.sh/) for fuzzing the smart contracts. Go through the [installation instructions](https://book.getfoundry.sh/getting-started/installation) to install foundry.
-- Configure the foundry.toml as per your requirements. Refer to the [foundry config reference](https://book.getfoundry.sh/reference/config/) for more details.
-- Install truffle : `npm i -g truffle`
-- The latest version of truffle has issues with installation on Windows.
-- To resolve the errors, go to [this page](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&passive=false), download Microsoft Visual Studio 2022 and then install the Visual Studio Installer.
-- Select Desktop Development with C++ and uncheck all the optional installation options.
-- Once it is done, the truffle can be installed with `npm i -g truffle`
+## Project Description
 
-## Instructions and commands
+Stabull is a decentralized finance (DeFi) exchange protocol designed to provide users with a seamless experience for adding and removing liquidity. It leverages oracles to obtain external price feeds, ensuring accurate and up-to-date token prices. Stabull's unique features include a bonus system and slippage adjustment mechanism to enhance the trading experience.
 
-- Install the boilerplate project dependencies. \
-  Do a check for the latest npm package versions. \
-  This will update the versions inside the package.json.
+By using Stabull, users can easily participate in liquidity pools, provide liquidity to various token pairs, and earn rewards in the form of transaction fees. The protocol employs advanced smart contract technology to enable secure and transparent transactions while minimizing counterparty risk.
 
-  ```shell
-  npx npm-check-updates -u
-  ```
+## Technologies Used
 
-  ```shell
-  git submodule update --init --recursive
-  ```
+- Solidity
+- Hardhat
+- Oracle integration (e.g., Chainlink, Band Protocol)
 
-  ```shell
-  yarn
-  ```
+## Folder Structure
 
-  This will install the packages mentioned inside the `package.json` file.
+A typical top-level directory layout:
 
-- Compile the smart contracts.
+## Install and Run
 
-  ```shell
-  yarn clean-compile
-  ```
+To install and run the project, follow these steps:
 
-- Check for linting and formatting errors in the code. This will display all the code errors and warnings in the terminal.
+1. Run `npm install` to install dependencies.
+2. Run `npx hardhat compile` to compile all contracts.
 
-  ```shell
-  yarn check
-  ```
+## Test
 
-- Generate the typechain types for the smart contracts. This will create a `typechain-types` folder comprising all the typechain types, in the root directory of the project.
+To test the files, execute the following steps:
 
-  ```shell
-  yarn typechain
-  ```
+1. Run `npm hardhat test` to run the test cases.
 
-- Compute the size of the smart contracts. This will display the size of the smart contracts in the terminal.
+## Documentation
 
-  ```shell
-  yarn size
-  ```
-
-- Run the test scripts. This uses the hardhat network configured in the `hardhat.config.ts` file to run the tests.
-
-  ```shell
-  yarn test
-  ```
-
-- To run the tests on your localhost node for debugging purposes, you can run the following commands.\
-  Instantiate the hardhat local node.
-
-  ```shell
-  yarn localnode
-  ```
-
-- Split the terminal running the hardhat node, or, open another terminal and run the project test scripts using the local node.
-
-  ```shell
-  yarn test:local
-  ```
-
-- Run the foundry test cases, written in solidity, which should be present inside the `test/foundry` folder.
-
-  ```shell
-  yarn test:forge
-  ```
-
-- Generate the code coverage report. \
-  After generating the report, you can open the `coverage/index.html` file to see the results.
-
-  ```shell
-  yarn coverage
-  ```
-
-- Generate the documentation for the smart contracts. This will create a `docs` folder comprising all the documentation related to the smart contracts, in the root directory of the project.
-
-  ```shell
-  yarn doc
-  ```
-
-- Instantiate the truffle dashboard. \
-  This lets you deploy the contracts without the need of pasting the private key anywhere in the project.
-
-  ```shell
-  truffle dashboard
-  ```
-
-- The browser will open up and then you have to connect with the MetaMask extension. Select the preferred network and the account to deploy the smart contract.
-
-- Deploy the hardhat project smart contracts using your preferred network or the truffle dashboard, by specifying the `NETWORK`. If you are using any network other than `truffle` or `localhost`, then the private key of the account from which the smart contract is to be deployed, should be specified in the `.env` file.
-
-  ```shell
-  yarn deploy {NETWORK}
-  ```
-
-- If `truffle` has been specified as the `NETWORK`, then switch to the browser and sign the deployment transaction from the MetaMask extension.
-
-- After the succesful deployment of the smart contracts, a `build/deploy.json` file will be generated comprising the deployed addresse and the ABI of the smart contracts.
-
-- Verify the smart contract using the `NETWORK` on which it was deployed and the smart contract address, alongwith the constructor arguments by modifiying the `verify.ts` file, and entering the network name in the CLI after running the following command.
-
-  ```shell
-  yarn verify {NETWORK}
-  ```
-
-## A typical top-level directory layout
-
-```shell
-.
-├── build                 # deployed addresses and the ABI of the smart contract (scripts/deploy.ts)
-  └── artifacts           # hardhat deployment information [hardhat default]
-  └── cache               # hardhat deployment information [hardhat default]
-  └── deployments         # address and ABI of the smart contract [modified after hardhat default]
-  └── foundry             # cache and output generated by foundry [gitignored]
-├── contracts             # smart contracts solidity files
-├── coverage              # coverage report (index.html) [gitignored]
-├── docs                  # smart contracts documentation
-├── lib                   # git submodule for foundry testing
-├── node_modules          # npm/yarn dependency files [gitignored]
-├── scripts               # deployment scripts (deploy.ts) and other tasks [modified after hardhat default]
-├── test                  # test scripts [modified after hardhat default]
-  └── foundry             # test scripts for foundry and fuzzing
-├── typechain-types       # typechain types, generated after compilation [gitignored]
-├── .env                  # API keys of block explorers for smart contract verification [should be gitignored]
-├── .env.example          # format for structuring the .env file
-├── .prettierrc           # prettier formatting configuration
-├── .solhint.json         # solhint configuration
-├── .solhintignore        # solhint ignore configuration
-├── .yarnrc.yml           # https://yarnpkg.com/getting-started/migration#if-required-enable-the-node-modules-plugin
-├── coverage.json         # gitignored
-├── foundry.toml          # foundry configuration https://book.getfoundry.sh/static/config.default.toml
-├── hardhat-config.ts     # hardhat configuration [modified after hardhat default]
-├── package.json          # project details and dependencies
-├── README.md             # project details and instructions
-├── remappings.txt        # foundry remappings https://book.getfoundry.sh/reference/forge/forge-remappings
-├── tsconfig.json         # typescript configuration [hardhat default]
-├── yarn.lock             # yarn dependencies
-├── .gitmodules
-└── .gitignore
-```
-
-## Notes
-
-- All the files and folders that have been [modified after hardhat default], as mentioned in the above directory layout, consists of well-commented codes in the respective places, regarding the modifications.
+- [Contracts overview](./Docs/ContractGuide.md)
