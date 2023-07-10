@@ -14,30 +14,14 @@ import {
   Orchestrator__factory,
   ProportionalLiquidity,
   ProportionalLiquidity__factory,
-  RIDC,
-  RIDC__factory,
   Swaps,
   Swaps__factory,
-  USDC,
-  USDC__factory,
 } from '../typechain-types';
 
 const main = async () => {
   await hre.run('compile');
 
   const multiSigAddress: string = `0x6F00C5E578D440c6c7F4d837dE5AFADf1d7d9F12`;
-
-  // deploy USDC contract
-  const USDC: USDC__factory = await he.getContractFactory('USDC');
-  const usdc: USDC = await USDC.deploy();
-  await usdc.deployed();
-  console.log('USDC deployed to:', usdc.address);
-
-  // deploy RIDC contract
-  const RIDC: RIDC__factory = await he.getContractFactory('RIDC');
-  const ridc: RIDC = await RIDC.deploy();
-  await ridc.deployed();
-  console.log('RIDC deployed to:', ridc.address);
 
   // deploy AssimilatorFactory contract
   const AssimilatorFactory: AssimilatorFactory__factory =
@@ -116,11 +100,12 @@ const main = async () => {
   console.log(`CurveFactoryV2 attached to Assimilator`);
 
   // Deploy new curve
+  // Here give the info of curve that needs to deployed intitially during the time of deploying contracts
   const curveInfo = {
     _name: 'rix-ridc-usdc',
     _symbol: 'rix-ridc',
-    _baseCurrency: ridc.address,
-    _quoteCurrency: usdc.address,
+    _baseCurrency: '0x7aA9B93a6b1Cc44020361B96a105F3b34Ecfc621',
+    _quoteCurrency: '0x149480B179Db4aed78D79fD172211024e35B1bf6',
     _baseWeight: '500000000000000000',
     _quoteWeight: '500000000000000000',
     _baseOracle: '0x92C09849638959196E976289418e5973CC96d645',
@@ -132,8 +117,8 @@ const main = async () => {
     _lambda: ethers.constants.WeiPerEther,
   };
 
-  await curveFactoryV2.newCurve(curveInfo);
-  console.log(`New Curve deployed`);
+  // await curveFactoryV2.newCurve(curveInfo);
+  // console.log(`New Curve deployed`);
 
   /**
    * @summary A build folder will be created in the root directory of the project

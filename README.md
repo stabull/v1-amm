@@ -18,11 +18,20 @@ By using Stabull, users can easily participate in liquidity pools, provide liqui
 
 - Solidity
 - Hardhat
+- Foundry
 - Oracle integration (e.g., Chainlink, Band Protocol)
 
 ## Folder Structure
 
 A typical top-level directory layout:
+.
+├── build # Compiled files (alternatively `dist`)
+├── docs # Documentation files (alternatively `doc`)
+├── src # Source files (alternatively `lib` or `app`)
+├── test # Automated tests (alternatively `spec` or `tests`)
+├── tools # Tools and utilities
+├── LICENSE
+└── README.md
 
 ## Install and Run
 
@@ -36,7 +45,9 @@ To install and run the project, follow these steps:
 To test the files, execute the following steps:
 
 1. Run `npm hardhat test` to run the test cases.
+2. Run `forge test` to run the test cases.
 
 ## Documentation
 
 - [Contracts overview](./Docs/ContractGuide.md)
+- [Gas report](./gas-report.txt)

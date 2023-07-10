@@ -7,11 +7,11 @@ import '@primitivefi/hardhat-dodoc';
 
 dotenv.config();
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY: string = process.env.PRIVATE_KEY as string;
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
-
+const POLYGON_MUMBAI_RPC_URL = process.env.POLYGON_MUMBAI_RPC_URL;
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -37,16 +37,16 @@ const config: HardhatUserConfig = {
     timeout: 100000000,
   },
   networks: {
-    hardhat: {
-      /**
-       * @see {@link https://hardhat.org/hardhat-network/reference/#allowunlimitedcontractsize}
-       * @default false
-       */
-      allowUnlimitedContractSize: true,
-      forking: {
-        url: `https://polygon-mumbai.g.alchemy.com/v2/uk0W4P5Rc9m_fnytl6E5Qg0m-yaU5hf-`,
-      },
-    },
+    // hardhat: {
+    //   /**
+    //    * @see {@link https://hardhat.org/hardhat-network/reference/#allowunlimitedcontractsize}
+    //    * @default false
+    //    */
+    //   allowUnlimitedContractSize: true,
+    //   forking: {
+    //     url: 'https://polygon-mainnet.g.alchemy.com/v2/IUgKjQ0qkdpS77ngTjNsYXzHFpUkgg9g',
+    //   },
+    // },
     /**
      * @description This is the default network for truffle dashboard.
      * There is no need to paste PRIVATE_KEY for deployment. This enables the connection to the
@@ -87,9 +87,10 @@ const config: HardhatUserConfig = {
       // accounts: [`0x${PRIVATE_KEY}`],
     },
     mumbai: {
-      url: 'https://polygon-mumbai.g.alchemy.com/v2/mamxSK4D6c4cH9OuGJYt-tF4dFgcxbYB',
+      url: POLYGON_MUMBAI_RPC_URL,
+      gasPrice: 3500000000,
       chainId: 80001,
-      // accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`],
     },
     polygon: {
       url: `https://polygon-rpc.com`,
@@ -99,6 +100,9 @@ const config: HardhatUserConfig = {
 
     localhost: {
       timeout: 1000000000,
+    },
+    local: {
+      url: 'http://localhost:24012/rpc',
     },
   },
   gasReporter: {
@@ -146,7 +150,7 @@ const config: HardhatUserConfig = {
    * for the verification of the contracts.
    * */
   etherscan: {
-    apiKey: 'mamxSK4D6c4cH9OuGJYt-tF4dFgcxbYB',
+    apiKey: ETHERSCAN_API_KEY,
   },
 };
 

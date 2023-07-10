@@ -13,8 +13,8 @@ import {
   Orchestrator__factory,
   ProportionalLiquidity,
   ProportionalLiquidity__factory,
-  RIDC,
-  RIDC__factory,
+  XSGD,
+  XSGD__factory,
   Swaps,
   Swaps__factory,
   USDC,
@@ -55,10 +55,10 @@ describe('Add liquidity', async () => {
     console.log('USDC deployed to:', usdc.address);
 
     // deploy RIDC contract
-    const RIDC: RIDC__factory = await ethers.getContractFactory('RIDC');
-    const ridc: RIDC = await RIDC.deploy();
-    await ridc.deployed();
-    console.log('RIDC deployed to:', ridc.address);
+    const XSGD: XSGD__factory = await ethers.getContractFactory('XSGD');
+    const xsgd: XSGD = await XSGD.deploy();
+    await xsgd.deployed();
+    console.log('XSGD deployed to:', xsgd.address);
 
     // deploy RIDC contract
     const CADC: CADC__factory = await ethers.getContractFactory('CADC');
@@ -144,9 +144,9 @@ describe('Add liquidity', async () => {
 
     // Deploy new curve for ridc-usdc
     const curveInfo = {
-      _name: 'rix-ridc-usdc',
-      _symbol: 'rix-ridc',
-      _baseCurrency: ridc.address,
+      _name: 'xsg-xsgd-usdc',
+      _symbol: 'xsg-ridc',
+      _baseCurrency: xsgd.address,
       _quoteCurrency: usdc.address,
       _baseWeight: '500000000000000000',
       _quoteWeight: '500000000000000000',
@@ -160,17 +160,17 @@ describe('Add liquidity', async () => {
     };
 
     await curveFactoryV2.newCurve(curveInfo);
-    console.log(' ridc deployed');
-    let curveAdd = await curveFactoryV2.getCurve(ridc.address, usdc.address);
-    const curveRidc = await hre.ethers.getContractAt('Curve', curveAdd);
-    await ridc
+    console.log(' xsgd curve deployed');
+    let curveAdd = await curveFactoryV2.getCurve(xsgd.address, usdc.address);
+    const curveXsgd = await hre.ethers.getContractAt('Curve', curveAdd);
+    await xsgd
       .connect(user1)
-      .approve(curveRidc.address, ethers.constants.MaxUint256);
+      .approve(curveXsgd.address, ethers.constants.MaxUint256);
     await usdc
       .connect(user1)
-      .approve(curveRidc.address, ethers.constants.MaxUint256);
+      .approve(curveXsgd.address, ethers.constants.MaxUint256);
     await usdc.connect(owner).transfer(user1.address, 10 ** 15);
-    await ridc.connect(owner).transfer(user1.address, 20 ** 12);
+    await xsgd.connect(owner).transfer(user1.address, 20 ** 12);
 
     // Deploy new curve for cadc-usdc
     const curveInfo2 = {
@@ -202,10 +202,10 @@ describe('Add liquidity', async () => {
     await cadc.connect(owner).transfer(user1.address, 30 ** 10);
 
     // check deposit for ridc-usdc
-    const bal1 = await curveRidc.balanceOf(user1.address);
+    const bal1 = await curveXsgd.balanceOf(user1.address);
     expect(bal1.toNumber()).equals(0);
     console.log('ridc deposit start');
-    await curveRidc
+    await curveXsgd
       .connect(user1)
       .deposit(
         10 ** 10,
@@ -216,7 +216,7 @@ describe('Add liquidity', async () => {
         1985158003
       );
     console.log('ridc deposit end');
-    const bal2 = await curveRidc.balanceOf(user1.address);
+    const bal2 = await curveXsgd.balanceOf(user1.address);
     expect(bal2).to.be.greaterThan(0);
 
     // check deposit for cadc-usdc
@@ -270,7 +270,7 @@ describe('Add liquidity', async () => {
       .originSwap(
         usdc.address,
         cadc.address,
-        ridc.address,
+        xsgd.address,
         1000,
         0,
         1985158003
@@ -279,7 +279,7 @@ describe('Add liquidity', async () => {
     const bal6 = await usdc.balanceOf(user1.address);
 
     console.log('Router swap end');
-    console.log('ridc curve data', (await curveRidc.curve()).toString());
+    console.log('ridc curve data', (await curveXsgd.curve()).toString());
     console.log('cadc curve data', (await curveCadc.curve()).toString());
   });
 
