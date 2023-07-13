@@ -25,7 +25,6 @@ By using Stabull, users can easily participate in liquidity pools, provide liqui
 
 A typical top-level directory layout:
 
-
 ├── build # Compiled files (alternatively `dist`)
 
 ├── docs # Documentation files (alternatively `doc`)
@@ -40,8 +39,6 @@ A typical top-level directory layout:
 
 └── README.md
 
-
-
 ## Install and Run
 
 To install and run the project, follow these steps:
@@ -53,10 +50,30 @@ To install and run the project, follow these steps:
 
 To test the files, execute the following steps:
 
-1. Run `npm hardhat test` to run the test cases.
-2. Run `forge test` to run the test cases.
+1. Run `npm hardhat test` to run the hardhat test cases.
+2. Run `forge test` to run the foundry test cases.
+
+## Deploy & Verify
+
+To deploy and verify the contracts, execute the following steps:
+
+1. Run `npm hardhat run --network <network name> scripts/deploy.ts` to deploy the assimilator factory, config, curveFactory and curve(if added in script).
+2. Run `npx hardhat verify --network <network name> <address> <constructor arguments> `.
+
+## Gas Report
+
+To generate the gas report of test cases
+
+1.  Run `forge test --gas-report` to generate the gas report.
+
+## Contract Size
+
+To generate the contracts sizes
+
+1. Run `forge build --sizes` to generate the contract sizes.
 
 ## Documentation
 
 - [Contracts overview](./Docs/ContractGuide.md)
 - [Gas report](./gas-report.txt)
+- [Contract sizes](./ContractSize.png)
