@@ -46,12 +46,13 @@ To install and run the project, follow these steps:
 1. Run `npm install` to install dependencies.
 2. Run `npx hardhat compile` to compile all contracts.
 
-## Test
+## Test & Coverage
 
 To test the files, execute the following steps:
 
 1. Run `npm hardhat test` to run the hardhat test cases.
 2. Run `forge test` to run the foundry test cases.
+3. RUn `forge coverage` to get the coverage of test cases.
 
 ## Deploy & Verify
 
@@ -74,6 +75,7 @@ To generate the contracts sizes
 
 ## Documentation
 
-- [Contracts overview](./Docs/ContractGuide.md)
+- [Contracts overview](./docs/ContractGuide.md)
 - [Gas report](./gas-report.txt)
-- [Contract sizes](./ContractSize.png)
+- [Contract sizes](./docs/ContractSize.png)
+- [Test coverage](./docs/TestCoverage.png)
