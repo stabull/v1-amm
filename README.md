@@ -75,7 +75,7 @@ To generate the contracts sizes
 
 ## Documentation
 
-- [Contracts overview](./docs/ContractGuide.md)
+- [Contracts overview](./Docs/ContractGuide.md)
 - [Gas report](./gas-report.txt)
-- [Contract sizes](./docs/ContractSize.png)
-- [Test coverage](./docs/TestCoverage.png)
+- [Contract sizes](./Docs/ContractSize.png)
+- [Test coverage](./Docs/TestCoverage.png)
