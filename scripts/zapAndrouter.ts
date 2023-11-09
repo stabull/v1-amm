@@ -11,7 +11,7 @@ const main = async () => {
 
   const Router: Router__factory = await he.getContractFactory('Router');
   const router: Router = await Router.deploy(
-    '0x10D604081301BE79Ca27FC935642187c5F20D149'
+    '0x86Ba17ebf8819f7fd32Cf1A43AbCaAe541A5BEbf'
   );
   await router.deployed();
   console.log('Router deployed to:', router.address);

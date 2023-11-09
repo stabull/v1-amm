@@ -55,12 +55,12 @@ contract Zap {
 		}
 		if (chainID == 1) {
 			return 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-		} else if (chainID == 137 || chainID == 31337) {
-			return 0xB9e9C21F4C1723878C83c5528A4bA34283dD8FCf;
+		} else if (chainID == 31337) {
+			return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
 		} else if (chainID == 42161) {
 			return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
-		} else if (chainID == 137 || chainID == 80001) {
-			return 0x77730cF052837ebc2f8f1398CAD38D946e58d432;
+		} else if (chainID == 137 ) {
+			return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
 		} else {
 			return address(0);
 		}

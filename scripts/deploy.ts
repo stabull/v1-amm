@@ -20,14 +20,17 @@ import {
 
 const main = async () => {
   await hre.run('compile');
+  console.log("Inside stabull deployment");
 
-  const multiSigAddress: string = `0x6F00C5E578D440c6c7F4d837dE5AFADf1d7d9F12`;
-
+  const multiSigAddress: string = `0x6Ace617029fbDD640209cD65C3Df886Bf3FB9a5f`;
+  console.log('1');
   // deploy AssimilatorFactory contract
   const AssimilatorFactory: AssimilatorFactory__factory =
     await he.getContractFactory('AssimilatorFactory');
+    console.log('2');
   const assimilatorFactory: AssimilatorFactory =
     await AssimilatorFactory.deploy();
+    console.log('3');
   await assimilatorFactory.deployed();
   console.log('AssimilatorFactory deployed to:', assimilatorFactory.address);
 
@@ -102,14 +105,14 @@ const main = async () => {
   // Deploy new curve
   // Here give the info of curve that needs to deployed intitially during the time of deploying contracts
   const curveInfo = {
-    _name: 'rix-ridc-usdc',
-    _symbol: 'rix-ridc',
-    _baseCurrency: '0x7aA9B93a6b1Cc44020361B96a105F3b34Ecfc621',
-    _quoteCurrency: '0x149480B179Db4aed78D79fD172211024e35B1bf6',
+    _name: 'nzd-nzdc-usdc',
+    _symbol: 'nzd-nzdc',
+    _baseCurrency: '0xFbBE4b730e1e77d02dC40fEdF9438E2802eab3B5',
+    _quoteCurrency: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
     _baseWeight: '500000000000000000',
     _quoteWeight: '500000000000000000',
-    _baseOracle: '0x92C09849638959196E976289418e5973CC96d645',
-    _quoteOracle: '0x572dDec9087154dC5dfBB1546Bb62713147e0Ab0',
+    _baseOracle: '0xa302a0B8a499fD0f00449df0a490DedE21105955',
+    _quoteOracle: '0xfE4A8cc5b5B2366C1B58Bea3858e81843581b2F7',
     _alpha: '500000000000000000',
     _beta: '350000000000000000',
     _feeAtHalt: '150000000000000000',
@@ -117,8 +120,8 @@ const main = async () => {
     _lambda: ethers.constants.WeiPerEther,
   };
 
-  // await curveFactoryV2.newCurve(curveInfo);
-  // console.log(`New Curve deployed`);
+   await curveFactoryV2.newCurve(curveInfo);
+  console.log(`New Curve deployed`);
 
   /**
    * @summary A build folder will be created in the root directory of the project

@@ -12,6 +12,7 @@ const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 const POLYGON_MUMBAI_RPC_URL = process.env.POLYGON_MUMBAI_RPC_URL;
+const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL;
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -93,9 +94,10 @@ const config: HardhatUserConfig = {
       accounts: [`0x${PRIVATE_KEY}`],
     },
     polygon: {
-      url: `https://polygon-rpc.com`,
+      url: POLYGON_RPC_URL,
       chainId: 137,
-      // accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`],
+      gasPrice: 3500000000,
     },
 
     localhost: {

@@ -50,6 +50,7 @@ contract SwapFeeTest is Test {
     int128 public protocolFee = 50000;
 
     function setUp() public {
+        console.log("1========");
         utils = new Utils();
         // create temp accounts
         for (uint256 i = 0; i < 4; ++i) {
@@ -61,7 +62,7 @@ contract SwapFeeTest is Test {
         tokens.push(IERC20Detailed(Mainnet.EUROC));
         tokens.push(IERC20Detailed(Mainnet.CADC));
         tokens.push(IERC20Detailed(Mainnet.USDC));
-
+        console.log("2========");
         // deploy mock oracle factory for deployed token (named gold)
         oracleFactory = new MockOracleFactory();
         oracles.push(
@@ -78,7 +79,7 @@ contract SwapFeeTest is Test {
 
         config = new Config(protocolFee,address(accounts[2]));
         // deploy new assimilator factory & curveFactory v2
-        
+        console.log("3========");
         assimFactory = new AssimilatorFactory();
         curveFactory = new CurveFactoryV2(
             address(assimFactory),
@@ -107,7 +108,7 @@ contract SwapFeeTest is Test {
             curves.push(_curve);
         }
         cheats.stopPrank();
-
+        console.log("4========");
         // now mint gold & silver tokens
         uint256 mintAmt = 300_000_000_000;
         for (uint256 i = 0; i < 4; ++i) {
@@ -123,11 +124,13 @@ contract SwapFeeTest is Test {
             }
         }
         // now approve
+        console.log("5========");
         cheats.startPrank(address(accounts[0]));
         for (uint256 i = 0; i < 3; ++i) {
             tokens[i].approve(address(curves[i]), type(uint256).max);
             tokens[3].approve(address(curves[i]), type(uint256).max);
         }
+        console.log("6========");
         cheats.stopPrank();
     }
 
