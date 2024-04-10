@@ -206,6 +206,8 @@ contract CurveFactoryV2 is ICurveFactory, Ownable {
 				return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
 			} else if (chainID == 42161) {
 				return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
+			} else if (chainID == 80001 ) {
+				return 0x77730cF052837ebc2f8f1398CAD38D946e58d432;
 			} else {
 				return address(0);
 			}

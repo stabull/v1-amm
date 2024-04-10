@@ -9,7 +9,7 @@ dotenv.config();
 
 const PRIVATE_KEY: string = process.env.PRIVATE_KEY as string;
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const ETHERSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 const POLYGON_MUMBAI_RPC_URL = process.env.POLYGON_MUMBAI_RPC_URL;
 const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL;
