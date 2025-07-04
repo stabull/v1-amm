@@ -62,7 +62,7 @@ contract RouterTest is Test {
     AssimilatorFactory assimilatorFactory;
     CurveFactoryV2 curveFactory;
     Router router;
-    Curve[fxTokenCount] dfxCurves;
+    Curve[fxTokenCount] stbCurves;
 
     function setUp() public {
         multisig = new MockUser();
@@ -70,7 +70,7 @@ contract RouterTest is Test {
         for (uint8 i = 0; i < users.length; i++) {
             users[i] = new MockUser();
         }
-
+        cheats.startPrank(address(multisig));
         config = new Config(protocolFee,address(multisig));
 
         assimilatorFactory = new AssimilatorFactory();
@@ -87,8 +87,8 @@ contract RouterTest is Test {
         cheats.startPrank(address(multisig));
         for (uint8 i = 0; i < fxTokenCount; i++) {
             CurveInfo memory curveInfo = CurveInfo(
-                string.concat("dfx-", foreignStables[i].symbol()),
-                string.concat("dfx-", foreignStables[i].symbol()),
+                string.concat("stb-", foreignStables[i].symbol()),
+                string.concat("stb-", foreignStables[i].symbol()),
                 address(foreignStables[i]),
                 address(usdc),
                 DefaultCurve.BASE_WEIGHT,
@@ -102,7 +102,7 @@ contract RouterTest is Test {
                 DefaultCurve.LAMBDA
             );
 
-            dfxCurves[i] = curveFactory.newCurve(curveInfo);
+            stbCurves[i] = curveFactory.newCurve(curveInfo);
         }
         cheats.stopPrank();
         
@@ -116,16 +116,16 @@ contract RouterTest is Test {
         
         cheats.startPrank(address(users[0]));
         for (uint8 i = 0; i < fxTokenCount; i++) {            
-            foreignStables[i].approve(address(dfxCurves[i]), type(uint).max);
+            foreignStables[i].approve(address(stbCurves[i]), type(uint).max);
             foreignStables[i].approve(address(router), type(uint).max);
-            usdc.approve(address(dfxCurves[i]), type(uint).max);
+            usdc.approve(address(stbCurves[i]), type(uint).max);
         }
         usdc.approve(address(router), type(uint).max);
         cheats.stopPrank();
 
         cheats.startPrank(address(users[0]));
         for (uint8 i = 0; i < fxTokenCount; i++) {           
-            dfxCurves[i].deposit(100_000_000e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+            stbCurves[i].deposit(100_000_000e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
         }
         cheats.stopPrank();
     }

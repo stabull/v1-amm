@@ -8,6 +8,7 @@ import '@primitivefi/hardhat-dodoc';
 dotenv.config();
 
 const PRIVATE_KEY: string = process.env.PRIVATE_KEY as string;
+
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || '';
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || '';
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || '';
@@ -46,16 +47,15 @@ const config: HardhatUserConfig = {
     timeout: 100000000,
   },
   networks: {
-    // hardhat: {
-    //   /**
-    //    * @see {@link https://hardhat.org/hardhat-network/reference/#allowunlimitedcontractsize}
-    //    * @default false
-    //    */
-    //   allowUnlimitedContractSize: true,
-    //   forking: {
-    //     url: 'https://polygon-mainnet.g.alchemy.com/v2/IUgKjQ0qkdpS77ngTjNsYXzHFpUkgg9g',
-    //   },
-    // },
+    hardhat: {
+      // /**
+      //  * @see {@link https://hardhat.org/hardhat-network/reference/#allowunlimitedcontractsize}
+      //  * @default false
+      //  */
+      forking: {
+        url: `https://eth-mainnet.g.alchemy.com/v2/${ETHERSCAN_API_KEY}`,
+      },
+    },
     /**
      * @description This is the default network for truffle dashboard.
      * There is no need to paste PRIVATE_KEY for deployment. This enables the connection to the
@@ -101,7 +101,6 @@ const config: HardhatUserConfig = {
       chainId: 80001,
       accounts: [`0x${PRIVATE_KEY}`],
     },
-    
     amoy: {
       url: POLYGON_AMOY_RPC_URL,
       gasPrice: 3500000000,

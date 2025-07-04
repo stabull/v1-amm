@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Stabull
+=======
+# STABULL
+>>>>>>> dev
 
 ## Table of Contents
 

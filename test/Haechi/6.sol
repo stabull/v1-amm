@@ -74,7 +74,7 @@ contract TargetSwapFeeTest is Test {
         oracles.push(IOracle(Mainnet.CHAINLINK_EUR_USD));
         oracles.push(IOracle(Mainnet.CHAINLINK_CAD_USD));
         oracles.push(IOracle(Mainnet.CHAINLINK_USDC_USD));
-
+        cheats.startPrank(address(accounts[2]));
         config = new Config(protocolFee, address(accounts[2]));
 
         // deploy new assimilator factory & curveFactory v2
@@ -88,7 +88,7 @@ contract TargetSwapFeeTest is Test {
         cheats.startPrank(address(accounts[2]));
         for (uint256 i = 0; i < 3; ++i) {
             CurveInfo memory curveInfo = CurveInfo(
-                string(abi.encode("dfx-curve-", i)),
+                string(abi.encode("stb-curve-", i)),
                 string(abi.encode("lp-", i)),
                 address(tokens[i]),
                 address(tokens[3]),

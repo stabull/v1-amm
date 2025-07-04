@@ -7,7 +7,7 @@
 
 ## Config
 
-- This contract is deployed with 2 parameters: protocol fee (0.03%) and treasury address.
+- This contract is deployed with 2 parameters: protocol fee (0.05%) and treasury address.
 - The treasury address could be any EOA or multisig wallet.
 - Basically, this contract is used to change or view protocol fees or treasury address.
 - This contract also has functions to set pool guards or freeze the pool.

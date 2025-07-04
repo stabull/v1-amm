@@ -12,5 +12,5 @@ arbitrum = "${ARBITRUM_RPC_URL}"
 polygon = "${POLYGON_MUMBAI_RPC_URL}"
 
 [etherscan]
-mainnet = { key = "6NNYBUFD69TTYJF3WAWSQN6U3AYPD6QQHW" }
+mainnet = { key = "${ETHEREUM_API_KEY}" }
 # arbitrum = { key = "${ARBITRUM_API_KEY}" }

@@ -5,7 +5,7 @@ library Mainnet {
     // Tokens
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    address public constant DFX = 0x888888435FDe8e7d4c54cAb67f206e4199454c60;
+    address public constant stb = 0x888888435FDe8e7d4c54cAb67f206e4199454c60;
     address public constant CADC = 0xcaDC0acd4B445166f12d2C07EAc6E2544FbE2Eef;
     address public constant EUROC = 0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c;
     address public constant XSGD = 0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96;

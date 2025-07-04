@@ -15,7 +15,7 @@ contract CurveFlash is IFlashCallback, Test {
     using LowGasSafeMath for int256;
     using SafeERC20 for IERC20;
 
-    Curve public dfxCurve;
+    Curve public stbCurve;
     Utils utils;
     
     function flashCallback(
@@ -41,10 +41,10 @@ contract CurveFlash is IFlashCallback, Test {
         IERC20(token1).safeTransfer(decoded.poolAddress, amount1Owed);
     }
 
-    function initFlash(address _dfxCurve, FlashParams memory params) external {
-        dfxCurve = Curve(_dfxCurve);
+    function initFlash(address _stbCurve, FlashParams memory params) external {
+        stbCurve = Curve(_stbCurve);
 
-        dfxCurve.flash(
+        stbCurve.flash(
             address(this),
             params.amount0,
             params.amount1,
@@ -54,7 +54,7 @@ contract CurveFlash is IFlashCallback, Test {
                     amount1: params.amount1,
                     decimal0: params.decimal0,
                     decimal1: params.decimal1,
-                    poolAddress: _dfxCurve
+                    poolAddress: _stbCurve
                 })
             )
         );

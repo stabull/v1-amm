@@ -50,7 +50,6 @@ contract SwapFeeTest is Test {
     int128 public protocolFee = 50000;
 
     function setUp() public {
-        console.log("1========");
         utils = new Utils();
         // create temp accounts
         for (uint256 i = 0; i < 4; ++i) {
@@ -62,7 +61,6 @@ contract SwapFeeTest is Test {
         tokens.push(IERC20Detailed(Mainnet.EUROC));
         tokens.push(IERC20Detailed(Mainnet.CADC));
         tokens.push(IERC20Detailed(Mainnet.USDC));
-        console.log("2========");
         // deploy mock oracle factory for deployed token (named gold)
         oracleFactory = new MockOracleFactory();
         oracles.push(
@@ -76,10 +74,9 @@ contract SwapFeeTest is Test {
         oracles.push(IOracle(Mainnet.CHAINLINK_EUR_USD));
         oracles.push(IOracle(Mainnet.CHAINLINK_CAD_USD));
         oracles.push(IOracle(Mainnet.CHAINLINK_USDC_USD));
-
+        cheats.startPrank(address(accounts[2]));
         config = new Config(protocolFee,address(accounts[2]));
         // deploy new assimilator factory & curveFactory v2
-        console.log("3========");
         assimFactory = new AssimilatorFactory();
         curveFactory = new CurveFactoryV2(
             address(assimFactory),
@@ -90,7 +87,7 @@ contract SwapFeeTest is Test {
         cheats.startPrank(address(accounts[2]));
         for (uint256 i = 0; i < 3; ++i) {
             CurveInfo memory curveInfo = CurveInfo(
-                string(abi.encode("dfx-curve-", i)),
+                string(abi.encode("stb-curve-", i)),
                 string(abi.encode("lp-", i)),
                 address(tokens[i]),
                 address(tokens[3]),
@@ -108,7 +105,6 @@ contract SwapFeeTest is Test {
             curves.push(_curve);
         }
         cheats.stopPrank();
-        console.log("4========");
         // now mint gold & silver tokens
         uint256 mintAmt = 300_000_000_000;
         for (uint256 i = 0; i < 4; ++i) {
@@ -124,13 +120,11 @@ contract SwapFeeTest is Test {
             }
         }
         // now approve
-        console.log("5========");
         cheats.startPrank(address(accounts[0]));
         for (uint256 i = 0; i < 3; ++i) {
             tokens[i].approve(address(curves[i]), type(uint256).max);
             tokens[3].approve(address(curves[i]), type(uint256).max);
         }
-        console.log("6========");
         cheats.stopPrank();
     }
 
@@ -171,8 +165,6 @@ contract SwapFeeTest is Test {
                 block.timestamp + 60
             );
             cheats.stopPrank();
-            console.log(tokens[3].balanceOf(address(accounts[1])));
-            console.log(tokens[3].balanceOf(address(accounts[2])));
             assertApproxEqAbs(
                 (tokens[3].balanceOf(address(accounts[1])) * 20) / 100000,
                 tokens[3].balanceOf(address(accounts[2])),
