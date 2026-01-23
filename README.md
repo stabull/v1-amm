@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+# Stabull
+=======
 # STABULL
+>>>>>>> dev
 
 ## Table of Contents
 
@@ -33,6 +37,8 @@ A typical top-level directory layout:
 
 ├── test # Automated tests (alternatively `spec` or `tests`)
 
+├── tools # Tools and utilities
+
 ├── LICENSE
 
 └── README.md
@@ -42,16 +48,15 @@ A typical top-level directory layout:
 To install and run the project, follow these steps:
 
 1. Run `npm install` to install dependencies.
-2. Run `npx hardhat compile` to compile all contracts (Make a .env file and put all values there which are in .env.example file).
+2. Run `npx hardhat compile` to compile all contracts.
 
 ## Test & Coverage
 
 To test the files, execute the following steps:
 
-1. Run `forge test --fork-url <rpc of the network>` to run the foundry test cases.
-2. RUn `forge coverage --fork-url <rpc of the network>` to get the coverage of test cases.
-
-In both cases, we will fork the network to run our test cases. Additionally, we will need to update the addresses in the test/lib/Addresses.sol file to match the target network, as it currently contains Ethereum mainnet addresses.
+1. Run `npm hardhat test` to run the hardhat test cases.
+2. Run `forge test` to run the foundry test cases.
+3. RUn `forge coverage` to get the coverage of test cases.
 
 ## Deploy & Verify
 
@@ -64,7 +69,7 @@ To deploy and verify the contracts, execute the following steps:
 
 To generate the gas report of test cases
 
-1.  Run `forge test --gas-report --fork-url <rpc of the network>` to generate the gas report.
+1.  Run `forge test --gas-report` to generate the gas report.
 
 ## Contract Size
 
@@ -74,7 +79,7 @@ To generate the contracts sizes
 
 ## Documentation
 
-- [Contracts overview](./docs/ContractGuide.md)
+- [Contracts overview](./Docs/ContractGuide.md)
 - [Gas report](./gas-report.txt)
-- [Contract sizes](./docs/ContractSize.png)
-- [Test coverage](./docs/TestCoverage.png)
+- [Contract sizes](./Docs/ContractSize.png)
+- [Test coverage](./Docs/TestCoverage.png)

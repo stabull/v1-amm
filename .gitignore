@@ -9,7 +9,6 @@ typechain-types
 cache
 artifacts
 build
-package-lock.json
 
 #yarn files
 .pnp.*

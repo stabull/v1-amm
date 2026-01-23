@@ -8,10 +8,20 @@ import '@primitivefi/hardhat-dodoc';
 dotenv.config();
 
 const PRIVATE_KEY: string = process.env.PRIVATE_KEY as string;
-const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || '';
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || '';
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || '';
+const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY || '';
+const ETHEREUM_RPC_URL = process.env.ETHEREUM_RPC_URL;
+const ETHEREUM_SEEPOLIA_RPC_URL = process.env.ETHEREUM_SEPOLIA_RPC_URL;
+const BASE_RPC_URL = process.env.BASE_RPC_URL;
+const BASE_SEPOLIA_RPC_URL = process.env.BASE_SEPOLIA_RPC_URL;
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 const POLYGON_MUMBAI_RPC_URL = process.env.POLYGON_MUMBAI_RPC_URL;
-const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
+const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL;
+const POLYGON_AMOY_RPC_URL= process.env.POLYGON_AMOY_RPC_URL;
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -61,7 +71,7 @@ const config: HardhatUserConfig = {
      * @dev uncomment the @param accounts to use your private key for deployments.
      */
     mainnet: {
-      url: `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      url: `${ETHEREUM_RPC_URL}`,
       chainId: 1,
       // accounts: [`0x${PRIVATE_KEY}`],
     },
@@ -71,21 +81,47 @@ const config: HardhatUserConfig = {
       // accounts: [`0x${PRIVATE_KEY}`],
     },
     sepolia: {
-      url: `https://rpc.sepolia.dev`,
+      url: ETHEREUM_SEEPOLIA_RPC_URL,
       chainId: 11155111,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
+    bsc: {
+      url: 'https://bsc-dataseed.binance.org/',
+      chainId: 56,
+      // accounts: [`0x${PRIVATE_KEY}`],
+    },
+    bscTestnet: {
+      url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      chainId: 97,
       // accounts: [`0x${PRIVATE_KEY}`],
     },
     mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/${POLYGON_MUMBAI_RPC_URL}`,
+      url: POLYGON_MUMBAI_RPC_URL,
       gasPrice: 3500000000,
       chainId: 80001,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    amoy: {
+      url: POLYGON_AMOY_RPC_URL,
+      gasPrice: 3500000000,
+      chainId: 80002,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
     polygon: {
-      url: `https://polygon-mainnet.g.alchemy.com/v2/${POLYGONSCAN_API_KEY}`,
+      url: POLYGON_RPC_URL,
       chainId: 137,
       accounts: [`0x${PRIVATE_KEY}`],
       gasPrice: 3500000000,
+    },
+    base: {
+      url: BASE_RPC_URL,
+      chainId: 8453,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
+    baseSepolia: {
+      url: BASE_SEPOLIA_RPC_URL,
+      chainId: 84532,
+      accounts: [`0x${PRIVATE_KEY}`],
     },
 
     localhost: {
@@ -99,6 +135,7 @@ const config: HardhatUserConfig = {
     enabled: true,
     currency: 'USD',
     token: 'ETH',
+    coinmarketcap: COINMARKETCAP_API_KEY,
     gasPrice: 21,
     showTimeSpent: true,
     outputFile: 'gas-report.txt',
@@ -107,7 +144,7 @@ const config: HardhatUserConfig = {
   paths: {
     artifacts: 'build/artifacts',
     cache: 'build/cache',
-    sources: 'src',
+    sources: 'contracts',
   },
   /**
    * @description This works along with the @package hardhat-contract-sizer to generate the size of the smart contracts.
@@ -137,9 +174,50 @@ const config: HardhatUserConfig = {
   /**
    * @description The following config requires the @param apiKey to be set
    * for the verification of the contracts.
+   * Updated to support multiple API keys and custom chains
    * */
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      // Ethereum networks
+      mainnet: ETHERSCAN_API_KEY,
+      sepolia: ETHERSCAN_API_KEY,
+      goerli: ETHERSCAN_API_KEY,
+      
+      // Polygon networks
+      polygon: POLYGONSCAN_API_KEY,
+      polygonMumbai: POLYGONSCAN_API_KEY,
+      polygonAmoy: POLYGONSCAN_API_KEY,
+      
+      // Base networks
+      base: BASESCAN_API_KEY,
+      baseSepolia: BASESCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: "baseSepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org"
+        }
+      },
+      {
+        network: "base",
+        chainId: 8453,
+        urls: {
+          apiURL: "https://api.basescan.org/api",
+          browserURL: "https://basescan.org"
+        }
+      },
+      {
+        network: "polygonAmoy",
+        chainId: 80002,
+        urls: {
+          apiURL: "https://api-amoy.polygonscan.com/api",
+          browserURL: "https://amoy.polygonscan.com"
+        }
+      }
+    ]
   },
 };
 
