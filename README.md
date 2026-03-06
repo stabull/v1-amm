@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # Stabull
-=======
-# STABULL
->>>>>>> dev
 
 ## Table of Contents
 
@@ -14,9 +10,9 @@
 
 ## Project Description
 
-Stabull is a decentralized finance (DeFi) exchange protocol designed to provide users with a seamless experience for adding and removing liquidity. It leverages oracles to obtain external price feeds, ensuring accurate and up-to-date token prices. Stabull's unique features include a bonus system and slippage adjustment mechanism to enhance the trading experience.
+Stabull is a two-asset AMM designed for local stablecoins and RWAs, using a hybrid curve to deliver low slippage near fair value. Off-chain oracles anchor the curve’s center in value terms, improving capital efficiency and reducing slippage by concentrating liquidity around the oracle price.
 
-By using Stabull, users can easily participate in liquidity pools, provide liquidity to various token pairs, and earn rewards in the form of transaction fees. The protocol employs advanced smart contract technology to enable secure and transparent transactions while minimizing counterparty risk.
+By using Stabull, users can easily participate in liquidity pools, provide liquidity to various token pairs, and earn rewards in the form of swap fees and liquidity incentives. 
 
 ## Technologies Used
 
@@ -80,6 +76,7 @@ To generate the contracts sizes
 ## Documentation
 
 - [Contracts overview](./Docs/ContractGuide.md)
+- [Curve concepts](./Docs/CurveConcepts.md)
 - [Gas report](./gas-report.txt)
 - [Contract sizes](./Docs/ContractSize.png)
 - [Test coverage](./Docs/TestCoverage.png)
