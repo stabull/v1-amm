@@ -20,7 +20,7 @@ const BASE_SEPOLIA_RPC_URL = process.env.BASE_SEPOLIA_RPC_URL;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 const POLYGON_MUMBAI_RPC_URL = process.env.POLYGON_MUMBAI_RPC_URL;
 const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL;
-const POLYGON_AMOY_RPC_URL= process.env.POLYGON_AMOY_RPC_URL;
+const POLYGON_AMOY_RPC_URL = process.env.POLYGON_AMOY_RPC_URL;
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -182,42 +182,42 @@ const config: HardhatUserConfig = {
       mainnet: ETHERSCAN_API_KEY,
       sepolia: ETHERSCAN_API_KEY,
       goerli: ETHERSCAN_API_KEY,
-      
+
       // Polygon networks
       polygon: POLYGONSCAN_API_KEY,
       polygonMumbai: POLYGONSCAN_API_KEY,
       polygonAmoy: POLYGONSCAN_API_KEY,
-      
+
       // Base networks
       base: BASESCAN_API_KEY,
       baseSepolia: BASESCAN_API_KEY,
     },
     customChains: [
       {
-        network: "baseSepolia",
+        network: 'baseSepolia',
         chainId: 84532,
         urls: {
-          apiURL: "https://api-sepolia.basescan.org/api",
-          browserURL: "https://sepolia.basescan.org"
-        }
+          apiURL: 'https://api-sepolia.basescan.org/api',
+          browserURL: 'https://sepolia.basescan.org',
+        },
       },
       {
-        network: "base",
+        network: 'base',
         chainId: 8453,
         urls: {
-          apiURL: "https://api.basescan.org/api",
-          browserURL: "https://basescan.org"
-        }
+          apiURL: 'https://api.basescan.org/api',
+          browserURL: 'https://basescan.org',
+        },
       },
       {
-        network: "polygonAmoy",
+        network: 'polygonAmoy',
         chainId: 80002,
         urls: {
-          apiURL: "https://api-amoy.polygonscan.com/api",
-          browserURL: "https://amoy.polygonscan.com"
-        }
-      }
-    ]
+          apiURL: 'https://api-amoy.polygonscan.com/api',
+          browserURL: 'https://amoy.polygonscan.com',
+        },
+      },
+    ],
   },
 };
 

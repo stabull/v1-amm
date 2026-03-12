@@ -595,12 +595,10 @@ contract Zap is Quotable {
 			depositAmount
 		);
 
-		uint256 baseDelta = outs[0] > dd.maxBaseAmount
-			? outs[0].sub(dd.curBaseAmount)
-			: 0;
-		uint256 usdcDelta = outs[1] > dd.maxQuoteAmount
-			? outs[1].sub(dd.curQuoteAmount)
-			: 0;
+		uint256 baseDelta =
+			outs[0] > dd.maxBaseAmount ? outs[0].sub(dd.curBaseAmount) : 0;
+		uint256 usdcDelta =
+			outs[1] > dd.maxQuoteAmount ? outs[1].sub(dd.curQuoteAmount) : 0;
 
 		// Make sure we can deposit
 		if (baseDelta > 0 || usdcDelta > 0) {

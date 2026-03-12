@@ -12,7 +12,7 @@
 
 Stabull is a two-asset AMM designed for local stablecoins and RWAs, using a hybrid curve to deliver low slippage near fair value. Off-chain oracles anchor the curve’s center in value terms, improving capital efficiency and reducing slippage by concentrating liquidity around the oracle price.
 
-By using Stabull, users can easily participate in liquidity pools, provide liquidity to various token pairs, and earn rewards in the form of swap fees and liquidity incentives. 
+By using Stabull, users can easily participate in liquidity pools, provide liquidity to various token pairs, and earn rewards in the form of swap fees and liquidity incentives.
 
 ## Technologies Used
 

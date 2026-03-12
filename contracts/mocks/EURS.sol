@@ -13,7 +13,7 @@ contract EURS is ERC20 {
 		_mint(to, amount);
 	}
 
-		function decimals() public view virtual override returns (uint8) {
-        return 2;
-    }
+	function decimals() public view virtual override returns (uint8) {
+		return 2;
+	}
 }

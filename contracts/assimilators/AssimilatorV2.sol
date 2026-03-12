@@ -101,8 +101,7 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard, Quotable {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
-			_rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
 
 		require(amount_ > 0, "intakeNumeraire/zero-amount!");
 
@@ -193,8 +192,7 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard, Quotable {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
-			_rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
 
 		token.safeTransfer(_dst, amount_);
 	}
@@ -206,8 +204,7 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard, Quotable {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
-			_rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
 	}
 
 	function viewRawAmountLPRatio(
@@ -305,8 +302,8 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard, Quotable {
 	function transferFee(int128 _amount, address _treasury) external override {
 		uint256 _rate = getRate();
 		if (_amount < 0) _amount = -(_amount);
-		uint256 amount = (_amount.mulu(10 ** tokenDecimals) *
-			10 ** oracleDecimals) / _rate;
+		uint256 amount =
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
 		token.safeTransfer(_treasury, amount);
 	}
 }
