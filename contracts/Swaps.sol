@@ -311,9 +311,10 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
-					_reserves[i].addr
-				);
+				nBals_[i] =
+					oBals_[i] = Assimilators.viewNumeraireBalance(
+						_reserves[i].addr
+					);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.intakeRawAndGetBalance(
@@ -360,9 +361,10 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
-					_reserves[i].addr
-				);
+				nBals_[i] =
+					oBals_[i] = Assimilators.viewNumeraireBalance(
+						_reserves[i].addr
+					);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.outputRawAndGetBalance(
@@ -408,9 +410,10 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
-					curve.assets[i].addr
-				);
+				nBals_[i] =
+					oBals_[i] = Assimilators.viewNumeraireBalance(
+						curve.assets[i].addr
+					);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.viewNumeraireAmountAndBalance(
@@ -455,9 +458,10 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
-					curve.assets[i].addr
-				);
+				nBals_[i] =
+					oBals_[i] = Assimilators.viewNumeraireBalance(
+						curve.assets[i].addr
+					);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.viewNumeraireAmountAndBalance(

@@ -115,9 +115,10 @@ library CurveMath {
 			int128 prevAmount;
 			{
 				prevAmount = outputAmt_;
-				outputAmt_ = _omega < _psi
-					? -(_inputAmt + _omega - _psi)
-					: -(_inputAmt + _lambda.mul(_omega - _psi));
+				outputAmt_ =
+					_omega < _psi
+						? -(_inputAmt + _omega - _psi)
+						: -(_inputAmt + _lambda.mul(_omega - _psi));
 				// outputAmt_ = _omega < _psi ? -(_inputAmt + _omega - _psi) : -(_inputAmt +_omega - _psi);
 			}
 

@@ -29,15 +29,14 @@ import "./interfaces/ICurveFactory.sol";
 import "./interfaces/IAssimilatorFactory.sol";
 import "./interfaces/IERC20Detailed.sol";
 import "./interfaces/IConfig.sol";
+import "./Quotable.sol";
 import "./Structs.sol";
 
-contract CurveFactoryV2 is ICurveFactory, Ownable {
+contract CurveFactoryV2 is ICurveFactory, Ownable, Quotable {
 	using Address for address;
 
 	IAssimilatorFactory public immutable assimilatorFactory;
 	IConfig public config;
-
-	address private USDC;
 
 	event NewCurve(
 		address indexed caller,
@@ -107,13 +106,16 @@ contract CurveFactoryV2 is ICurveFactory, Ownable {
 		return (curves[curveId]);
 	}
 
-	function newCurve(CurveInfo memory _info) public onlyOwner returns (Curve) {
+	function newCurve(
+		CurveInfo memory _info,
+		Tokens _baseToken
+	) public onlyOwner returns (Curve) {
 		require(
-			_info._quoteCurrency == quoteAddress(),
+			_info._quoteCurrency == quoteAddress(_baseToken),
 			"CurveFactory/quote-currency-is-not-usdc"
 		);
 		require(
-			_info._baseCurrency != quoteAddress(),
+			_info._baseCurrency != quoteAddress(_baseToken),
 			"CurveFactory/base-currency-is-usdc"
 		);
 
@@ -121,9 +123,6 @@ contract CurveFactoryV2 is ICurveFactory, Ownable {
 			_info._baseWeight == 5e17 && _info._quoteWeight == 5e17,
 			"CurveFactory/weights-not-50-percent"
 		);
-
-		uint256 quoteDec = IERC20Detailed(_info._quoteCurrency).decimals();
-		uint256 baseDec = IERC20Detailed(_info._baseCurrency).decimals();
 
 		bytes32 curveId = keccak256(
 			abi.encode(_info._baseCurrency, _info._quoteCurrency)
@@ -136,7 +135,8 @@ contract CurveFactoryV2 is ICurveFactory, Ownable {
 				assimilatorFactory.newAssimilator(
 					_info._baseOracle,
 					_info._baseCurrency,
-					baseDec
+					IERC20Detailed(_info._baseCurrency).decimals(),
+					_baseToken
 				)
 			);
 		AssimilatorV2 _quoteAssim;
@@ -146,7 +146,8 @@ contract CurveFactoryV2 is ICurveFactory, Ownable {
 				assimilatorFactory.newAssimilator(
 					_info._quoteOracle,
 					_info._quoteCurrency,
-					quoteDec
+					IERC20Detailed(_info._quoteCurrency).decimals(),
+					_baseToken
 				)
 			);
 
@@ -192,37 +193,5 @@ contract CurveFactoryV2 is ICurveFactory, Ownable {
 		emit NewCurve(msg.sender, curveId, address(curve));
 
 		return curve;
-	}
-
-	function quoteAddress() internal view returns (address) {
-		if (USDC == address(0)) {
-			uint256 chainID;
-			assembly {
-				chainID := chainid()
-			}
-			if (chainID == 1) {
-				// Ethereum Mainnet
-				return 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-			} else if (chainID == 137) {
-				// Polygon Mainnet
-				return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-			} else if (chainID == 42161) {
-				// Arbitrum One
-				return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
-			} else if (chainID == 8453) {
-				// Base Mainnet
-				return 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
-			} else if (chainID == 84532) {
-				// Base Sepolia
-				return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-			} else if (chainID == 80002) {
-				// Polygon Amoy Testnet
-				return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-			} else {
-				return address(0);
-			}
-		} else {
-			return USDC;
-		}
 	}
 }

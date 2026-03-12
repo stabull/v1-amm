@@ -23,15 +23,18 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../lib/ABDKMath64x64.sol";
 import "../interfaces/IAssimilator.sol";
 import "../interfaces/IOracle.sol";
+import "../Quotable.sol";
 
-contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
+error WrongNumberOfDecimals();
+
+contract AssimilatorV2 is IAssimilator, ReentrancyGuard, Quotable {
 	using ABDKMath64x64 for int128;
 	using ABDKMath64x64 for uint256;
 
 	using SafeMath for uint256;
 	using SafeERC20 for IERC20;
 
-	IERC20 public immutable usdc;
+	IERC20 public immutable BASE_ASSET;
 
 	IOracle public immutable oracle;
 	IERC20 public immutable token;
@@ -43,45 +46,16 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 		IOracle _oracle,
 		address _token,
 		uint256 _tokenDecimals,
-		uint256 _oracleDecimals
+		uint256 _oracleDecimals,
+		Tokens _baseAsset
 	) {
 		oracle = _oracle;
 		token = IERC20(_token);
 		oracleDecimals = _oracleDecimals;
 		tokenDecimals = _tokenDecimals;
-		usdc = IERC20(quoteAddress());
-	}
 
-function quoteAddress() internal view returns (address) {
-	uint256 chainID;
-	assembly {
-		chainID := chainid()
+		BASE_ASSET = IERC20(quoteAddress(_baseAsset));
 	}
-	if (chainID == 1) {
-		// Ethereum Mainnet
-		return 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-	} else if (chainID == 31337) {
-		// Hardhat Local Network
-		return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-	} else if (chainID == 42161) {
-		// Arbitrum One
-		return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
-	} else if (chainID == 137) {
-		// Polygon Mainnet
-		return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-	} else if (chainID == 8453) {
-		// Base Mainnet
-		return 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
-	} else if (chainID == 84532) {
-		// Base Sepolia
-		return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-	} else if (chainID == 80002) {
-		// Polygon Amoy Testnet
-		return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-	} else {
-		return address(0);
-	}
-}
 
 	function getRate() public view override returns (uint256) {
 		(, int256 price, , , ) = oracle.latestRoundData();
@@ -127,11 +101,10 @@ function quoteAddress() internal view returns (address) {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
-			_rate;
-		
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
+
 		require(amount_ > 0, "intakeNumeraire/zero-amount!");
-		
+
 		token.safeTransferFrom(msg.sender, address(this), amount_);
 	}
 
@@ -152,14 +125,16 @@ function quoteAddress() internal view returns (address) {
 
 		_tokenBal = _tokenBal.mul(1e18).div(_baseWeight);
 
-		uint256 _usdcBal = usdc.balanceOf(_addr).mul(1e18).div(_quoteWeight);
+		uint256 _usdcBal = BASE_ASSET.balanceOf(_addr).mul(1e18).div(
+			_quoteWeight
+		);
 
 		// Rate is in 1e6
 		uint256 _rate = _usdcBal.mul(10 ** tokenDecimals).div(_tokenBal);
 
 		amount_ = (_amount.mulu(10 ** tokenDecimals) * 1e6) / _rate;
 
-		if (address(token) == address(usdc)) {
+		if (address(token) == address(BASE_ASSET)) {
 			require(
 				amount_ >= _minQuoteAmount && amount_ <= _maxQuoteAmount,
 				"Assimilator/LP Ratio imbalanced!"
@@ -171,7 +146,7 @@ function quoteAddress() internal view returns (address) {
 			);
 		}
 		require(amount_ > 0, "intakeNumeraire/zero-amount!");
-		
+
 		token.safeTransferFrom(msg.sender, address(this), amount_);
 	}
 
@@ -217,8 +192,7 @@ function quoteAddress() internal view returns (address) {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
-			_rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
 
 		token.safeTransfer(_dst, amount_);
 	}
@@ -230,8 +204,7 @@ function quoteAddress() internal view returns (address) {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
-			_rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
 	}
 
 	function viewRawAmountLPRatio(
@@ -248,7 +221,9 @@ function quoteAddress() internal view returns (address) {
 		_tokenBal = _tokenBal.mul(1e18).div(_baseWeight);
 
 		// 1e6
-		uint256 _usdcBal = usdc.balanceOf(_addr).mul(1e18).div(_quoteWeight);
+		uint256 _usdcBal = BASE_ASSET.balanceOf(_addr).mul(1e18).div(
+			_quoteWeight
+		);
 
 		// Rate is in 1e6
 		uint256 _rate = _usdcBal.mul(10 ** tokenDecimals).div(_tokenBal);
@@ -312,7 +287,9 @@ function quoteAddress() internal view returns (address) {
 
 		if (_tokenBal <= 0) return ABDKMath64x64.fromUInt(0);
 
-		uint256 _usdcBal = usdc.balanceOf(_addr).mul(1e18).div(_quoteWeight);
+		uint256 _usdcBal = BASE_ASSET.balanceOf(_addr).mul(1e18).div(
+			_quoteWeight
+		);
 
 		// Rate is in 1e6
 		uint256 _rate = _usdcBal.mul(1e18).div(
@@ -325,8 +302,8 @@ function quoteAddress() internal view returns (address) {
 	function transferFee(int128 _amount, address _treasury) external override {
 		uint256 _rate = getRate();
 		if (_amount < 0) _amount = -(_amount);
-		uint256 amount = (_amount.mulu(10 ** tokenDecimals) *
-			10 ** oracleDecimals) / _rate;
+		uint256 amount =
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
 		token.safeTransfer(_treasury, amount);
 	}
 }
