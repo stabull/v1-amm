@@ -15,19 +15,11 @@
 
 pragma solidity 0.8.19;
 
-import "../assimilators/AssimilatorV2.sol";
-import "../interfaces/IOracle.sol";
-import "../interfaces/IQuotable.sol";
+interface IQuotable {
+	enum Tokens {
+		NZDS,
+		USDC
+	}
 
-interface IAssimilatorFactory {
-	function getAssimilator(
-		address _token
-	) external view returns (AssimilatorV2);
-
-	function newAssimilator(
-		IOracle _oracle,
-		address _token,
-		uint256 _tokenDecimals,
-		IQuotable.Tokens _baseAsset
-	) external returns (AssimilatorV2);
+	function quoteAddress(Tokens _base_asset) external view returns (address);
 }

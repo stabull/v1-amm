@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./assimilators/AssimilatorV2.sol";
 import "./interfaces/IAssimilatorFactory.sol";
 import "./interfaces/IOracle.sol";
+import "./interfaces/IQuotable.sol";
 
 contract AssimilatorFactory is IAssimilatorFactory, Ownable {
 	event NewAssimilator(
@@ -55,7 +56,8 @@ contract AssimilatorFactory is IAssimilatorFactory, Ownable {
 	function newAssimilator(
 		IOracle _oracle,
 		address _token,
-		uint256 _tokenDecimals
+		uint256 _tokenDecimals,
+		IQuotable.Tokens _baseAsset
 	) external override onlyCurveFactoryOrOwner returns (AssimilatorV2) {
 		bytes32 assimilatorID = keccak256(abi.encode(_token));
 		if (address(assimilators[assimilatorID]) != address(0))
@@ -65,7 +67,8 @@ contract AssimilatorFactory is IAssimilatorFactory, Ownable {
 			_oracle,
 			_token,
 			_tokenDecimals,
-			IOracle(_oracle).decimals()
+			IOracle(_oracle).decimals(),
+			_baseAsset
 		);
 		assimilators[assimilatorID] = assimilator;
 		emit NewAssimilator(
