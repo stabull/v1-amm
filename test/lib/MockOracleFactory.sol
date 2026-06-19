@@ -15,16 +15,15 @@ contract MockOracleFactory {
         bytes32 oracleID = keccak256(abi.encode(_token));
         if (oracles[oracleID] != address(0)) {
             return MockChainlinkOracle(oracles[oracleID]);
-        } else {
-            MockChainlinkOracle _oracle = new MockChainlinkOracle(
-                _token,
-                _name,
-                _decimals,
-                _price
-            );
-            oracles[oracleID] = address(_oracle);
-            return _oracle;
         }
+        MockChainlinkOracle _oracle = new MockChainlinkOracle(
+            _token,
+            _name,
+            _decimals,
+            _price
+        );
+        oracles[oracleID] = address(_oracle);
+        return _oracle;
     }
 
     function getOracle(address _underlying) external view returns (address) {

@@ -130,9 +130,8 @@ contract Config is Ownable, IConfig, ReentrancyGuard {
 		bool _poolGuarded = poolGuarded[pool];
 		if (!_poolGuarded) {
 			return globalGuarded;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	function getPoolGuardAmount(
@@ -141,9 +140,8 @@ contract Config is Ownable, IConfig, ReentrancyGuard {
 		uint256 _poolGuardAmt = poolGuardAmt[pool];
 		if (_poolGuardAmt == 0) {
 			return globalGuardAmt;
-		} else {
-			return _poolGuardAmt;
 		}
+		return _poolGuardAmt;
 	}
 
 	function getPoolCap(address pool) external view override returns (uint256) {

@@ -130,11 +130,10 @@ library CurveMath {
 
 				enforceSwapInvariant(_oGLiq, _omega, _nGLiq, _psi);
 				return outputAmt_;
-			} else {
-				_nGLiq = _oGLiq + _inputAmt + outputAmt_;
-
-				_nBals[_outputIndex] = _oBals[_outputIndex].add(outputAmt_);
 			}
+			_nGLiq = _oGLiq + _inputAmt + outputAmt_;
+
+			_nBals[_outputIndex] = _oBals[_outputIndex].add(outputAmt_);
 		}
 
 		revert("Curve/swap-convergence-failed");
