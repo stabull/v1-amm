@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
@@ -75,7 +74,7 @@ contract SwapFeeTest is Test {
         oracles.push(IOracle(Mainnet.CHAINLINK_CAD_USD));
         oracles.push(IOracle(Mainnet.CHAINLINK_USDC_USD));
         cheats.startPrank(address(accounts[2]));
-        config = new Config(protocolFee,address(accounts[2]));
+        config = new Config(protocolFee, address(accounts[2]));
         // deploy new assimilator factory & curveFactory v2
         assimFactory = new AssimilatorFactory();
         curveFactory = new CurveFactoryV2(
@@ -152,7 +151,14 @@ contract SwapFeeTest is Test {
 
             // first deposit
             cheats.startPrank(address(accounts[0]));
-            curves[i + 1].deposit(1000000000 * 1e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+            curves[i + 1].deposit(
+                1000000000 * 1e18,
+                0,
+                0,
+                type(uint256).max,
+                type(uint256).max,
+                block.timestamp + 60
+            );
             cheats.stopPrank();
 
             cheats.startPrank(address(accounts[1]));
@@ -191,7 +197,14 @@ contract SwapFeeTest is Test {
 
             // first deposit
             cheats.startPrank(address(accounts[0]));
-            curves[i + 1].deposit(1000000000 * 1e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+            curves[i + 1].deposit(
+                1000000000 * 1e18,
+                0,
+                0,
+                type(uint256).max,
+                type(uint256).max,
+                block.timestamp + 60
+            );
             cheats.stopPrank();
 
             cheats.startPrank(address(accounts[1]));

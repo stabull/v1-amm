@@ -6,11 +6,22 @@
       "options": {
         "printWidth": 80,
         "tabWidth": 4,
-        "useTabs": true,
         "singleQuote": false,
-        "bracketSpacing": true,
-        "explicitTypes": "always"
+        "bracketSpacing": true
+      }
+    },
+    {
+      "files": "contracts/**/*.sol",
+      "options": {
+        "useTabs": true
+      }
+    },
+    {
+      "files": "test/**/*.sol",
+      "options": {
+        "useTabs": false
       }
     }
-  ]
+  ],
+  "plugins": ["prettier-plugin-solidity"]
 }

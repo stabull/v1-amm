@@ -45,7 +45,7 @@ contract CurveFactoryV2Test is Test {
         treasury = new MockUser();
         newTreasury = new MockUser();
         liquidityProvider = new MockUser();
-        config = new Config(protocolFee,address(treasury));
+        config = new Config(protocolFee, address(treasury));
 
         cheats.startPrank(address(treasury));
         assimilatorFactory = new AssimilatorFactory();
@@ -58,13 +58,14 @@ contract CurveFactoryV2Test is Test {
         cheats.stopPrank();
     }
 
-    function testUpdatingIncorrectOracles() public { // wrong/malicious info
+    function testUpdatingIncorrectOracles() public {
+        // wrong/malicious info
         cheats.startPrank(address(treasury));
         // Incorrect oracles, with correct token pairing and decimals
         CurveInfo memory badCadcCurveInfo = CurveInfo(
             string.concat("stb-", cadc.name()),
             string.concat("stb-", cadc.symbol()),
-            // Haechi #5 
+            // Haechi #5
             // 1. locks USDC as the quote token
             // 2. removes token decimals field and just retrieves them from the tokens themselves
             // as long as base token remains the same there will be no issues with changing to a new oracle
@@ -85,22 +86,37 @@ contract CurveFactoryV2Test is Test {
         console.log(address(assimilatorFactory.getAssimilator(address(cadc))));
 
         // Assim address from the factory
-        AssimilatorV2 cadcFactoryAssimBefore = assimilatorFactory.getAssimilator(address(cadc));
-        AssimilatorV2 usdcFactoryAssimBefore = assimilatorFactory.getAssimilator(address(usdc));
+        AssimilatorV2 cadcFactoryAssimBefore = assimilatorFactory
+            .getAssimilator(address(cadc));
+        AssimilatorV2 usdcFactoryAssimBefore = assimilatorFactory
+            .getAssimilator(address(usdc));
 
         // Assim address from the curve
-        IAssimilator cadcCurveAssimBefore = IAssimilator(stbCadcCurve.assimilator(address(cadc)));
-        IAssimilator usdcCurveAssimBefore = IAssimilator(stbCadcCurve.assimilator(address(usdc)));
+        IAssimilator cadcCurveAssimBefore = IAssimilator(
+            stbCadcCurve.assimilator(address(cadc))
+        );
+        IAssimilator usdcCurveAssimBefore = IAssimilator(
+            stbCadcCurve.assimilator(address(usdc))
+        );
 
         // Curve vs Factory assim
-        assertTrue(cadcCurveAssimBefore == cadcFactoryAssimBefore, "before-update/curve and factory cadc assimilators are not the same");
-        assertTrue(usdcCurveAssimBefore == usdcFactoryAssimBefore, "before-update/curve and factory usdc assimilators are not the same");
+        assertTrue(
+            cadcCurveAssimBefore == cadcFactoryAssimBefore,
+            "before-update/curve and factory cadc assimilators are not the same"
+        );
+        assertTrue(
+            usdcCurveAssimBefore == usdcFactoryAssimBefore,
+            "before-update/curve and factory usdc assimilators are not the same"
+        );
 
         uint256 cadcRateBefore = cadcCurveAssimBefore.getRate();
         uint256 usdcRateBefore = usdcCurveAssimBefore.getRate();
 
         // Bad front ran oracles rates should be the same for USDC vs CADC
-        assertTrue(cadcCurveAssimBefore.getRate() == usdcCurveAssimBefore.getRate(), "before-update/usdc and cadc rates are not the same");
+        assertTrue(
+            cadcCurveAssimBefore.getRate() == usdcCurveAssimBefore.getRate(),
+            "before-update/usdc and cadc rates are not the same"
+        );
 
         // PAUSE THE POOLS
         stbCadcCurve.setFrozen(true);
@@ -110,58 +126,78 @@ contract CurveFactoryV2Test is Test {
         assimilatorFactory.revokeAssimilator(address(usdc));
 
         // Create new assimilators for respective tokens
-        assimilatorFactory.newAssimilator(
-            cadcOracle,
-            address(cadc),
-            18
-        );
+        assimilatorFactory.newAssimilator(cadcOracle, address(cadc), 18);
 
-        assimilatorFactory.newAssimilator(
-            usdcOracle,
-            address(usdc),
-            6
-        );
+        assimilatorFactory.newAssimilator(usdcOracle, address(usdc), 6);
 
-        IAssimilator cadcFactoryAssimNew = assimilatorFactory.getAssimilator(address(cadc));
-        IAssimilator usdcFactoryAssimNew = assimilatorFactory.getAssimilator(address(usdc));
+        IAssimilator cadcFactoryAssimNew = assimilatorFactory.getAssimilator(
+            address(cadc)
+        );
+        IAssimilator usdcFactoryAssimNew = assimilatorFactory.getAssimilator(
+            address(usdc)
+        );
 
         // New assimilator should be different than the old
-        assertTrue(cadcFactoryAssimNew != cadcFactoryAssimBefore, "after-update/curve and factory cadc assimilators are the same");
-        assertTrue(usdcFactoryAssimNew != usdcFactoryAssimBefore, "after-update/curve and factory usdc assimilators are the same");
+        assertTrue(
+            cadcFactoryAssimNew != cadcFactoryAssimBefore,
+            "after-update/curve and factory cadc assimilators are the same"
+        );
+        assertTrue(
+            usdcFactoryAssimNew != usdcFactoryAssimBefore,
+            "after-update/curve and factory usdc assimilators are the same"
+        );
 
         // Set new assimilators
         stbCadcCurve.setAssimilator(
             address(cadc),
             address(cadcFactoryAssimNew),
-            address(usdc),  
+            address(usdc),
             address(usdcFactoryAssimNew)
         );
 
-        IAssimilator cadcCurveAssimNew = IAssimilator(stbCadcCurve.assimilator(address(cadc)));
-        IAssimilator usdcCurveAssimNew = IAssimilator(stbCadcCurve.assimilator(address(usdc)));
+        IAssimilator cadcCurveAssimNew = IAssimilator(
+            stbCadcCurve.assimilator(address(cadc))
+        );
+        IAssimilator usdcCurveAssimNew = IAssimilator(
+            stbCadcCurve.assimilator(address(usdc))
+        );
 
         // Curve vs Factory assim
-        assertTrue(cadcFactoryAssimNew == cadcCurveAssimNew, "after-update/curve and factory cadc assimilators are not the same");
-        assertTrue(usdcFactoryAssimNew == usdcCurveAssimNew, "after-update/curve and factory usdc assimilators are not the same");
+        assertTrue(
+            cadcFactoryAssimNew == cadcCurveAssimNew,
+            "after-update/curve and factory cadc assimilators are not the same"
+        );
+        assertTrue(
+            usdcFactoryAssimNew == usdcCurveAssimNew,
+            "after-update/curve and factory usdc assimilators are not the same"
+        );
 
         // Rates should be all different now and non zero
         uint256 cadcRateAfter = cadcCurveAssimNew.getRate();
         uint256 usdcRateAfter = usdcCurveAssimNew.getRate();
 
-        assertTrue(cadcRateAfter != usdcRateAfter, "after-update/cadc and usdc rates are the same");
+        assertTrue(
+            cadcRateAfter != usdcRateAfter,
+            "after-update/cadc and usdc rates are the same"
+        );
         console.log(cadcRateAfter, usdcRateAfter);
         assertTrue(cadcRateAfter != 0, "after-update/zero cadc rate");
         assertTrue(usdcRateAfter != 0, "after-update/zero usdc rate");
 
         // Comparing to old rates
-        assertTrue(cadcRateAfter != cadcRateBefore, "after-update/cadc rates are the same as before");
-        assertTrue(usdcRateAfter != usdcRateBefore, "after-update/usdc rates are the same as before");
+        assertTrue(
+            cadcRateAfter != cadcRateBefore,
+            "after-update/cadc rates are the same as before"
+        );
+        assertTrue(
+            usdcRateAfter != usdcRateBefore,
+            "after-update/usdc rates are the same as before"
+        );
 
         // UNPAUSE THE POOLS
         stbCadcCurve.setFrozen(false);
         console.log(address(assimilatorFactory.getAssimilator(address(cadc))));
         console.log(address(assimilatorFactory.getAssimilator(address(usdc))));
-
 
         // console.log(stbCadcCurve.assimilator(address(cadc)));
         // console.log(stbCadcCurve.assimilator(address(usdc)));
@@ -172,26 +208,60 @@ contract CurveFactoryV2Test is Test {
         deal(address(cadc), address(liquidityProvider), 100_000e18);
         deal(address(usdc), address(liquidityProvider), 100_000e6);
         cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max); 
-        stbCadcCurve.deposit(100_000e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        usdc.approve(address(stbCadcCurve), type(uint).max);
+        stbCadcCurve.deposit(
+            100_000e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
 
-        uint256 cadcBalanceBeforeSwap = cadc.balanceOf(address(liquidityProvider));
-        uint256 usdcBalanceBeforeSwap = usdc.balanceOf(address(liquidityProvider));
+        uint256 cadcBalanceBeforeSwap = cadc.balanceOf(
+            address(liquidityProvider)
+        );
+        uint256 usdcBalanceBeforeSwap = usdc.balanceOf(
+            address(liquidityProvider)
+        );
         console.log(cadcBalanceBeforeSwap);
         console.log(usdcBalanceBeforeSwap);
 
-        stbCadcCurve.originSwap(address(usdc), address(cadc), 10_000e6, 0, block.timestamp + 60);
-        stbCadcCurve.originSwap(address(cadc), address(usdc), uint256(10_000e18).div(cadcRateAfter).mul(1e8), 0, block.timestamp + 60);
+        stbCadcCurve.originSwap(
+            address(usdc),
+            address(cadc),
+            10_000e6,
+            0,
+            block.timestamp + 60
+        );
+        stbCadcCurve.originSwap(
+            address(cadc),
+            address(usdc),
+            uint256(10_000e18).div(cadcRateAfter).mul(1e8),
+            0,
+            block.timestamp + 60
+        );
 
-        uint256 cadcBalanceAfterSwap = cadc.balanceOf(address(liquidityProvider));
-        uint256 usdcBalanceAfterSwap = usdc.balanceOf(address(liquidityProvider));
+        uint256 cadcBalanceAfterSwap = cadc.balanceOf(
+            address(liquidityProvider)
+        );
+        uint256 usdcBalanceAfterSwap = usdc.balanceOf(
+            address(liquidityProvider)
+        );
 
         assertApproxEqRel(cadcBalanceAfterSwap, cadcBalanceBeforeSwap, 0.01e18);
         assertApproxEqRel(usdcBalanceAfterSwap, usdcBalanceBeforeSwap, 0.01e18);
 
-        stbCadcCurve.withdraw(stbCadcCurve.balanceOf(address(liquidityProvider)), block.timestamp + 60);
-        uint256 cadcBalanceAfterWithdraw = cadc.balanceOf(address(liquidityProvider));
-        uint256 usdcBalanceAfterWithdraw = usdc.balanceOf(address(liquidityProvider));
+        stbCadcCurve.withdraw(
+            stbCadcCurve.balanceOf(address(liquidityProvider)),
+            block.timestamp + 60
+        );
+        uint256 cadcBalanceAfterWithdraw = cadc.balanceOf(
+            address(liquidityProvider)
+        );
+        uint256 usdcBalanceAfterWithdraw = usdc.balanceOf(
+            address(liquidityProvider)
+        );
 
         assertApproxEqRel(cadcBalanceAfterWithdraw, 100_000e18, 0.01e18);
         assertApproxEqRel(usdcBalanceAfterWithdraw, 100_000e6, 0.01e18);
@@ -241,13 +311,15 @@ contract CurveFactoryV2Test is Test {
         );
         stbCadcCurve = curveFactory.newCurve(goodCadcCurveInfo);
 
-        IAssimilator usdcFactoryAssimNew = assimilatorFactory.getAssimilator(address(usdc));
+        IAssimilator usdcFactoryAssimNew = assimilatorFactory.getAssimilator(
+            address(usdc)
+        );
 
         // Someone trying to mess up an exisiting curve
         stbCadcCurve.setAssimilator(
             address(usdc),
-            address(usdcFactoryAssimNew), 
-            address(usdc), 
+            address(usdcFactoryAssimNew),
+            address(usdc),
             address(usdcFactoryAssimNew)
         );
     }

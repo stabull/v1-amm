@@ -74,7 +74,7 @@ contract MinDepositTest is Test {
         oracles.push(IOracle(Mainnet.CHAINLINK_USDC_USD));
 
         cheats.startPrank(address(accounts[2]));
-        config = new Config(protocolFee,address(accounts[2]));
+        config = new Config(protocolFee, address(accounts[2]));
 
         // deploy new assimilator factory & curveFactory v2
         assimFactory = new AssimilatorFactory();
@@ -151,7 +151,14 @@ contract MinDepositTest is Test {
         uint256 minUsdcToDeposit = 350000000000000;
         // first deposit
         cheats.startPrank(address(accounts[0]));
-        curves[1].deposit(1000000000 * 1e18, 0, 0,type(uint256).max,type(uint256).max, block.timestamp + 60);
+        curves[1].deposit(
+            1000000000 * 1e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
 
         // read bal
@@ -213,7 +220,7 @@ contract MinDepositTest is Test {
         tokens[3].approve(address(curves[1]), type(uint256).max);
         cheats.stopPrank();
 
-        uint256 maxEurocToDeposit = 600000*decimals[1];
+        uint256 maxEurocToDeposit = 600000 * decimals[1];
         uint256 maxUsdcToDeposit = 700000 * decimals[3];
         // deposit
         cheats.startPrank(address(accounts[0]));

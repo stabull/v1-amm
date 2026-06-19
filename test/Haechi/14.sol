@@ -73,7 +73,7 @@ contract MinimalLiquidityLockTest is Test {
         oracles.push(IOracle(Mainnet.CHAINLINK_CAD_USD));
         oracles.push(IOracle(Mainnet.CHAINLINK_USDC_USD));
         cheats.startPrank(address(accounts[2]));
-        config = new Config(protocolFee,address(accounts[2]));
+        config = new Config(protocolFee, address(accounts[2]));
 
         // deploy new assimilator factory & curveFactory v2
         assimFactory = new AssimilatorFactory();
@@ -141,9 +141,23 @@ contract MinimalLiquidityLockTest is Test {
 
         // first deposit
         cheats.startPrank(address(accounts[1]));
-        curves[1].deposit(1000000000 * 1e18, 0, 0,type(uint256).max,type(uint256).max, block.timestamp + 60);
+        curves[1].deposit(
+            1000000000 * 1e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         // second deposit
-        curves[1].deposit(1 * 1e18, 0, 0,type(uint256).max,type(uint256).max, block.timestamp + 60);
+        curves[1].deposit(
+            1 * 1e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
         uint256 locked = curves[1].balanceOf(address(0));
         assert(locked == 1e6);

@@ -16,7 +16,12 @@ contract MockOracleFactory {
         if (oracles[oracleID] != address(0)) {
             return MockChainlinkOracle(oracles[oracleID]);
         } else {
-            MockChainlinkOracle _oracle = new MockChainlinkOracle(_token, _name, _decimals, _price);
+            MockChainlinkOracle _oracle = new MockChainlinkOracle(
+                _token,
+                _name,
+                _decimals,
+                _price
+            );
             oracles[oracleID] = address(_oracle);
             return _oracle;
         }

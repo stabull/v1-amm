@@ -32,7 +32,7 @@ contract TargetSwapFeeTest is Test {
 
     // account order is lp provider, trader, treasury
     MockUser[] public accounts;
-    
+
     MockOracleFactory oracleFactory;
     // token order is gold, euroc, cadc, usdc
     IERC20Detailed[] public tokens;
@@ -134,15 +134,9 @@ contract TargetSwapFeeTest is Test {
         cheats.assume(amt > 100);
         cheats.assume(amt < 10000000);
         // mint token to trader
-        deal(
-            address(tokens[1]),
-            address(accounts[1]),
-            amt * decimals[1] * 100
-        );
+        deal(address(tokens[1]), address(accounts[1]), amt * decimals[1] * 100);
 
-        uint256 eurocBalance = tokens[1].balanceOf(
-            address(accounts[1])
-        );
+        uint256 eurocBalance = tokens[1].balanceOf(address(accounts[1]));
 
         cheats.startPrank(address(accounts[1]));
         tokens[1].approve(address(curves[1]), type(uint256).max);
@@ -151,7 +145,14 @@ contract TargetSwapFeeTest is Test {
 
         // first deposit
         cheats.startPrank(address(accounts[0]));
-        curves[1].deposit(1000000000 * 1e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        curves[1].deposit(
+            1000000000 * 1e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
 
         uint256 forexBeforeSwap = tokens[1].balanceOf(address(accounts[1]));

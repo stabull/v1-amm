@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
@@ -37,12 +36,7 @@ contract RouterTest is Test {
 
     uint8 constant fxTokenCount = 3;
 
-    IERC20Detailed[] public foreignStables = [
-        cadc,
-        xsgd, 
-        euroc, 
-        usdc
-    ];
+    IERC20Detailed[] public foreignStables = [cadc, xsgd, euroc, usdc];
 
     IOracle usdcOracle = IOracle(Mainnet.CHAINLINK_USDC_USD);
     IOracle cadcOracle = IOracle(Mainnet.CHAINLINK_CAD_USD);
@@ -71,19 +65,19 @@ contract RouterTest is Test {
             users[i] = new MockUser();
         }
         cheats.startPrank(address(multisig));
-        config = new Config(protocolFee,address(multisig));
+        config = new Config(protocolFee, address(multisig));
 
         assimilatorFactory = new AssimilatorFactory();
-        
+
         curveFactory = new CurveFactoryV2(
             address(assimilatorFactory),
             address(config)
         );
 
         router = new Router(address(curveFactory));
-        
+
         assimilatorFactory.setCurveFactory(address(curveFactory));
-        
+
         cheats.startPrank(address(multisig));
         for (uint8 i = 0; i < fxTokenCount; i++) {
             CurveInfo memory curveInfo = CurveInfo(
@@ -105,17 +99,21 @@ contract RouterTest is Test {
             stbCurves[i] = curveFactory.newCurve(curveInfo);
         }
         cheats.stopPrank();
-        
+
         uint256 user1TknAmnt = 300_000_000;
 
         // Mint Foreign Stables
         for (uint8 i = 0; i <= fxTokenCount; i++) {
             uint256 decimals = 10 ** foreignStables[i].decimals();
-            deal(address(foreignStables[i]), address(users[0]), user1TknAmnt.mul(decimals));
+            deal(
+                address(foreignStables[i]),
+                address(users[0]),
+                user1TknAmnt.mul(decimals)
+            );
         }
-        
+
         cheats.startPrank(address(users[0]));
-        for (uint8 i = 0; i < fxTokenCount; i++) {            
+        for (uint8 i = 0; i < fxTokenCount; i++) {
             foreignStables[i].approve(address(stbCurves[i]), type(uint).max);
             foreignStables[i].approve(address(router), type(uint).max);
             usdc.approve(address(stbCurves[i]), type(uint).max);
@@ -124,19 +122,26 @@ contract RouterTest is Test {
         cheats.stopPrank();
 
         cheats.startPrank(address(users[0]));
-        for (uint8 i = 0; i < fxTokenCount; i++) {           
-            stbCurves[i].deposit(100_000_000e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        for (uint8 i = 0; i < fxTokenCount; i++) {
+            stbCurves[i].deposit(
+                100_000_000e18,
+                0,
+                0,
+                type(uint256).max,
+                type(uint256).max,
+                block.timestamp + 60
+            );
         }
         cheats.stopPrank();
     }
 
     function routerOriginSwapAndCheck(
-        IERC20Detailed fromToken, 
-        IERC20Detailed toToken, 
-        IOracle fromOracle, 
-        IOracle toOracle, 
-        uint256 _amount) public {
-        
+        IERC20Detailed fromToken,
+        IERC20Detailed toToken,
+        IOracle fromOracle,
+        IOracle toOracle,
+        uint256 _amount
+    ) public {
         uint8 fromDecimals = fromToken.decimals();
         uint8 toDecimals = toToken.decimals();
 
@@ -144,11 +149,18 @@ contract RouterTest is Test {
 
         deal(address(fromToken), address(this), amount);
         fromToken.approve(address(router), type(uint).max);
-            
+
         uint256 beforeAmount = toToken.balanceOf(address(this));
-        
-        router.originSwap(Mainnet.USDC, address(fromToken), address(toToken), amount, 0, block.timestamp + 60);
-        
+
+        router.originSwap(
+            Mainnet.USDC,
+            address(fromToken),
+            address(toToken),
+            amount,
+            0,
+            block.timestamp + 60
+        );
+
         uint256 afterAmount = toToken.balanceOf(address(this));
 
         // Get oracle rates assuming decimals are equal
@@ -171,12 +183,12 @@ contract RouterTest is Test {
     }
 
     function routerViewTargetSwapAndCheck(
-        IERC20Detailed fromToken, 
-        IERC20Detailed toToken, 
-        IOracle fromOracle, 
-        IOracle toOracle, 
-        uint256 _amount) public {
-
+        IERC20Detailed fromToken,
+        IERC20Detailed toToken,
+        IOracle fromOracle,
+        IOracle toOracle,
+        uint256 _amount
+    ) public {
         uint8 fromDecimals = fromToken.decimals();
         uint8 toDecimals = toToken.decimals();
 
@@ -186,10 +198,15 @@ contract RouterTest is Test {
         uint256 fromRate = uint256(fromOracle.latestAnswer());
         uint256 toRate = uint256(toOracle.latestAnswer());
 
-        uint256 obtained = router.viewTargetSwap(Mainnet.USDC, address(fromToken), address(toToken), amount);
+        uint256 obtained = router.viewTargetSwap(
+            Mainnet.USDC,
+            address(fromToken),
+            address(toToken),
+            amount
+        );
 
         uint256 expected = amount.mul(toRate).div(fromRate);
-        
+
         emit log_uint(expected);
 
         if (fromDecimals <= toDecimals) {
@@ -199,65 +216,113 @@ contract RouterTest is Test {
             uint8 decimalsDiff = fromDecimals - toDecimals;
             expected = expected.mul(10 ** decimalsDiff);
         }
-        
+
         assertApproxEqRel(obtained, expected, 0.01e18);
     }
-    
+
     // TARGET SWAPS
     function testCadcToUsdcTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(cadc, usdc, cadcOracle, usdcOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            cadc,
+            usdc,
+            cadcOracle,
+            usdcOracle,
+            _amount
+        );
     }
-    
+
     function testUsdcToCadcTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(usdc, cadc, usdcOracle, cadcOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            usdc,
+            cadc,
+            usdcOracle,
+            cadcOracle,
+            _amount
+        );
     }
 
     function testCadcToXsgdTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(cadc, xsgd, cadcOracle, xsgdOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            cadc,
+            xsgd,
+            cadcOracle,
+            xsgdOracle,
+            _amount
+        );
     }
 
     function testCadcToEurocTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(cadc, euroc, cadcOracle, eurocOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            cadc,
+            euroc,
+            cadcOracle,
+            eurocOracle,
+            _amount
+        );
     }
 
     function testEurocToXsgdTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(euroc, xsgd, eurocOracle, xsgdOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            euroc,
+            xsgd,
+            eurocOracle,
+            xsgdOracle,
+            _amount
+        );
     }
 
     function testXsgdToEurocTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(xsgd, euroc, xsgdOracle, eurocOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            xsgd,
+            euroc,
+            xsgdOracle,
+            eurocOracle,
+            _amount
+        );
     }
 
     function testXsgdToCadcTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(xsgd, cadc, xsgdOracle, cadcOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            xsgd,
+            cadc,
+            xsgdOracle,
+            cadcOracle,
+            _amount
+        );
     }
 
     function testEurocToCadcTargetSwap(uint256 _amount) public {
         cheats.assume(_amount > 100);
         cheats.assume(_amount < 10_000_000);
 
-        routerViewTargetSwapAndCheck(euroc, cadc, eurocOracle, cadcOracle, _amount);
+        routerViewTargetSwapAndCheck(
+            euroc,
+            cadc,
+            eurocOracle,
+            cadcOracle,
+            _amount
+        );
     }
 
     // ORIGIN SWAPS
@@ -317,7 +382,6 @@ contract RouterTest is Test {
         routerOriginSwapAndCheck(xsgd, cadc, xsgdOracle, cadcOracle, _amount);
     }
 
-
     // Global Transactable State Frozen
     function testFail_GlobalFrozenOriginSwap() public {
         // Cannot make swaps because global state is frozen
@@ -325,9 +389,15 @@ contract RouterTest is Test {
         routerOriginSwapAndCheck(cadc, euroc, cadcOracle, eurocOracle, 100_000);
     }
 
-     function testFail_GlobalFrozenTargetSwap() public {
+    function testFail_GlobalFrozenTargetSwap() public {
         // Cannot make swaps because global state is frozen
         IConfig(address(config)).setGlobalFrozen(true);
-        routerViewTargetSwapAndCheck(euroc, xsgd, usdcOracle, cadcOracle, 100_000);
+        routerViewTargetSwapAndCheck(
+            euroc,
+            xsgd,
+            usdcOracle,
+            cadcOracle,
+            100_000
+        );
     }
 }

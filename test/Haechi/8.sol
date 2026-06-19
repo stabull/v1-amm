@@ -25,4 +25,3 @@ contract FactoryAddressCheck is Test {
         fail("AssimFactory/curve factory zero address!");
     }
 }
-

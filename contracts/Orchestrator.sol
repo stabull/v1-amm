@@ -77,8 +77,7 @@ library Orchestrator {
 		curve.delta =
 			(_feeAtHalt).divu(1e18).div(
 				uint256(2).fromUInt().mul(curve.alpha.sub(curve.beta))
-			) +
-			ONE_WEI;
+			) + ONE_WEI;
 
 		curve.epsilon = (_epsilon + 1).divu(1e18);
 
