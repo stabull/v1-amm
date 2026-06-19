@@ -181,8 +181,8 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 100_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
+        usdc.approve(address(stbCadcCurve), type(uint256).max);
 
         stbCadcCurve.deposit(
             100_000e18,
@@ -224,8 +224,8 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), _gGuardAmt / 1e12);
 
         cheats.startPrank(address(liquidityProvider));
-        cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
+        usdc.approve(address(stbCadcCurve), type(uint256).max);
 
         stbCadcCurve.deposit(
             _gGuardAmt,
@@ -250,8 +250,8 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 200_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
+        usdc.approve(address(stbCadcCurve), type(uint256).max);
 
         stbCadcCurve.deposit(
             100_000e18 + _extraAmt,
@@ -280,8 +280,8 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 300_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
         // deposit less than 80k
         stbEurocCurve.deposit(
             80_000e18 - _extraAmt,
@@ -309,8 +309,8 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 300_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
         // deposit more than 80k
         stbEurocCurve.deposit(
             80_000e18 + _extraAmt,
@@ -332,8 +332,8 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 200_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
 
         stbEurocCurve.deposit(
             100_000e18,
@@ -356,8 +356,8 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 200_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
 
         stbEurocCurve.deposit(
             100_000e18 + _extraAmt,

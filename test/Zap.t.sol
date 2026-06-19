@@ -127,8 +127,8 @@ contract ZapTest is Test {
         // now approve
         cheats.startPrank(address(accounts[0]));
         for (uint256 i = 0; i < 3; ++i) {
-            tokens[i].approve(address(curves[i]), type(uint).max);
-            tokens[3].approve(address(curves[i]), type(uint).max);
+            tokens[i].approve(address(curves[i]), type(uint256).max);
+            tokens[3].approve(address(curves[i]), type(uint256).max);
         }
         // approve for zap
         for (uint256 i = 0; i < 4; ++i) {
@@ -137,8 +137,8 @@ contract ZapTest is Test {
         cheats.stopPrank();
 
         cheats.startPrank(address(victim));
-        IERC20Detailed(Mainnet.EUROC).approve(address(zap), type(uint).max);
-        IERC20Detailed(Mainnet.USDC).approve(address(zap), type(uint).max);
+        IERC20Detailed(Mainnet.EUROC).approve(address(zap), type(uint256).max);
+        IERC20Detailed(Mainnet.USDC).approve(address(zap), type(uint256).max);
         deal(address(Mainnet.EUROC), address(victim), 100_000_000e6);
         cheats.stopPrank();
     }
@@ -156,10 +156,10 @@ contract ZapTest is Test {
             );
 
             cheats.startPrank(address(accounts[1]));
-            tokens[i + 1].approve(address(curves[i + 1]), type(uint).max);
-            tokens[3].approve(address(curves[i + 1]), type(uint).max);
-            tokens[i + 1].approve(address(zap), type(uint).max);
-            tokens[3].approve(address(zap), type(uint).max);
+            tokens[i + 1].approve(address(curves[i + 1]), type(uint256).max);
+            tokens[3].approve(address(curves[i + 1]), type(uint256).max);
+            tokens[i + 1].approve(address(zap), type(uint256).max);
+            tokens[3].approve(address(zap), type(uint256).max);
             cheats.stopPrank();
 
             // first deposit

@@ -234,7 +234,10 @@ library Orchestrator {
 		require(_weight < 1e18, "Curve/weight-must-be-less-than-one");
 
 		if (_numeraire != _reserve)
-			IERC20(_numeraire).safeApprove(_reserveApproveTo, type(uint).max);
+			IERC20(_numeraire).safeApprove(
+				_reserveApproveTo,
+				type(uint256).max
+			);
 
 		Storage.Assimilator storage _numeraireAssimilator = curve.assimilators[
 			_numeraire

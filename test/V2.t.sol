@@ -119,8 +119,8 @@ contract V2Test is Test {
         // now approve
         cheats.startPrank(address(accounts[0]));
         for (uint256 i = 0; i < 3; ++i) {
-            tokens[i].approve(address(curves[i]), type(uint).max);
-            tokens[3].approve(address(curves[i]), type(uint).max);
+            tokens[i].approve(address(curves[i]), type(uint256).max);
+            tokens[3].approve(address(curves[i]), type(uint256).max);
         }
         cheats.stopPrank();
     }
@@ -142,8 +142,8 @@ contract V2Test is Test {
         noDecGoldBal = noDecGoldBal.div(decimals[0]);
 
         cheats.startPrank(address(accounts[1]));
-        tokens[0].approve(address(curves[0]), type(uint).max);
-        tokens[3].approve(address(curves[0]), type(uint).max);
+        tokens[0].approve(address(curves[0]), type(uint256).max);
+        tokens[3].approve(address(curves[0]), type(uint256).max);
         cheats.stopPrank();
 
         // first deposit
@@ -203,8 +203,8 @@ contract V2Test is Test {
             noDecForexBal = noDecForexBal.div(decimals[i + 1]);
 
             cheats.startPrank(address(accounts[1]));
-            tokens[i + 1].approve(address(curves[i + 1]), type(uint).max);
-            tokens[3].approve(address(curves[i + 1]), type(uint).max);
+            tokens[i + 1].approve(address(curves[i + 1]), type(uint256).max);
+            tokens[3].approve(address(curves[i + 1]), type(uint256).max);
             cheats.stopPrank();
 
             // first deposit
@@ -307,8 +307,8 @@ contract V2Test is Test {
                     poolForexBal.div(100).mul(percentage)
                 );
             cheats.startPrank(address(accounts[1]));
-            tokens[i].approve(address(curves[i]), type(uint).max);
-            tokens[3].approve(address(curves[i]), type(uint).max);
+            tokens[i].approve(address(curves[i]), type(uint256).max);
+            tokens[3].approve(address(curves[i]), type(uint256).max);
             uint256 originalForexBal = tokens[i].balanceOf(
                 address(accounts[1])
             );
@@ -370,8 +370,8 @@ contract V2Test is Test {
             );
             // now deposit huge amount to the pool
             cheats.startPrank(address(accounts[0]));
-            tokens[i].approve(address(curves[i]), type(uint).max);
-            tokens[3].approve(address(curves[i]), type(uint).max);
+            tokens[i].approve(address(curves[i]), type(uint256).max);
+            tokens[3].approve(address(curves[i]), type(uint256).max);
             curves[i].deposit(
                 poolForexBal.div(percentage).mul(100) + 1e6,
                 0,

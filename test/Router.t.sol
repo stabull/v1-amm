@@ -115,11 +115,11 @@ contract RouterTest is Test {
 
         cheats.startPrank(address(users[0]));
         for (uint8 i = 0; i < fxTokenCount; i++) {
-            foreignStables[i].approve(address(stbCurves[i]), type(uint).max);
-            foreignStables[i].approve(address(router), type(uint).max);
-            usdc.approve(address(stbCurves[i]), type(uint).max);
+            foreignStables[i].approve(address(stbCurves[i]), type(uint256).max);
+            foreignStables[i].approve(address(router), type(uint256).max);
+            usdc.approve(address(stbCurves[i]), type(uint256).max);
         }
-        usdc.approve(address(router), type(uint).max);
+        usdc.approve(address(router), type(uint256).max);
         cheats.stopPrank();
 
         cheats.startPrank(address(users[0]));
@@ -149,7 +149,7 @@ contract RouterTest is Test {
         uint256 amount = uint256(_amount).mul(10 ** fromDecimals);
 
         deal(address(fromToken), address(this), amount);
-        fromToken.approve(address(router), type(uint).max);
+        fromToken.approve(address(router), type(uint256).max);
 
         uint256 beforeAmount = toToken.balanceOf(address(this));
 

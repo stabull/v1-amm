@@ -211,8 +211,8 @@ contract CurveFactoryV2Test is Test {
         cheats.startPrank(address(liquidityProvider));
         deal(address(cadc), address(liquidityProvider), 100_000e18);
         deal(address(usdc), address(liquidityProvider), 100_000e6);
-        cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
+        usdc.approve(address(stbCadcCurve), type(uint256).max);
         stbCadcCurve.deposit(
             100_000e18,
             0,
