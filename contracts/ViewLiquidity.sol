@@ -15,9 +15,9 @@
 
 pragma solidity 0.8.19;
 
-import "./Storage.sol";
-import "./Assimilators.sol";
-import "./lib/ABDKMath64x64.sol";
+import { Storage } from "./Storage.sol";
+import { Assimilators } from "./Assimilators.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
 
 library ViewLiquidity {
 	using ABDKMath64x64 for int128;

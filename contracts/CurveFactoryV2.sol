@@ -5,7 +5,7 @@
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// This program is disstributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -17,19 +17,16 @@ pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
 // Finds new Curves! logs their addresses and provides `isCurve(address) -> (bool)`
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-import "./Curve.sol";
-import "./interfaces/IFreeFromUpTo.sol";
-import "./AssimilatorFactory.sol";
-import "./assimilators/AssimilatorV2.sol";
-import "./interfaces/ICurveFactory.sol";
-import "./interfaces/IAssimilatorFactory.sol";
-import "./interfaces/IERC20Detailed.sol";
-import "./interfaces/IConfig.sol";
-import "./Structs.sol";
+import { Curve } from "./Curve.sol";
+import { AssimilatorV2 } from "./assimilators/AssimilatorV2.sol";
+import { ICurveFactory } from "./interfaces/ICurveFactory.sol";
+import { IAssimilatorFactory } from "./interfaces/IAssimilatorFactory.sol";
+import { IERC20Detailed } from "./interfaces/IERC20Detailed.sol";
+import { IConfig } from "./interfaces/IConfig.sol";
+import { CurveInfo } from "./Structs.sol";
 
 contract CurveFactoryV2 is ICurveFactory, Ownable {
 	using Address for address;

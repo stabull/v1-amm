@@ -16,11 +16,12 @@
 pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "./Curve.sol";
+import { Curve } from "./Curve.sol";
 
 contract Zap {
 	using SafeMath for uint256;
@@ -622,10 +623,12 @@ contract Zap {
 			depositAmount
 		);
 
-		uint256 baseDelta =
-			outs[0] > dd.maxBaseAmount ? outs[0].sub(dd.curBaseAmount) : 0;
-		uint256 usdcDelta =
-			outs[1] > dd.maxQuoteAmount ? outs[1].sub(dd.curQuoteAmount) : 0;
+		uint256 baseDelta = outs[0] > dd.maxBaseAmount
+			? outs[0].sub(dd.curBaseAmount)
+			: 0;
+		uint256 usdcDelta = outs[1] > dd.maxQuoteAmount
+			? outs[1].sub(dd.curQuoteAmount)
+			: 0;
 
 		// Make sure we can deposit
 		if (baseDelta > 0 || usdcDelta > 0) {

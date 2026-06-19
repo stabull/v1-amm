@@ -2,10 +2,11 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./assimilators/AssimilatorV2.sol";
-import "./interfaces/IAssimilatorFactory.sol";
-import "./interfaces/IOracle.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+
+import { AssimilatorV2 } from "./assimilators/AssimilatorV2.sol";
+import { IAssimilatorFactory } from "./interfaces/IAssimilatorFactory.sol";
+import { IOracle } from "./interfaces/IOracle.sol";
 
 contract AssimilatorFactory is IAssimilatorFactory, Ownable {
 	event NewAssimilator(

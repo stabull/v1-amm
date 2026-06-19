@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.19;
 
-import "./interfaces/ICurveFactory.sol";
-import "./interfaces/IOracle.sol";
+import { ICurveFactory } from "./interfaces/ICurveFactory.sol";
+import { IOracle } from "./interfaces/IOracle.sol";
 
 struct OriginSwapData {
 	address _origin;

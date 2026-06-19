@@ -3,18 +3,22 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "../src/AssimilatorFactory.sol";
-import "../src/CurveFactoryV2.sol";
-import "../src/Curve.sol";
-import "../src/Config.sol";
-import "../src/interfaces/IERC20Detailed.sol";
-import "../src/interfaces/IAssimilator.sol";
-import "../src/interfaces/IOracle.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "./lib/MockUser.sol";
-import "./lib/CheatCodes.sol";
-import "./lib/Address.sol";
-import "./lib/CurveParams.sol";
+import { AssimilatorFactory } from "../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../contracts/CurveFactoryV2.sol";
+import { Curve } from "../contracts/Curve.sol";
+import { Config } from "../contracts/Config.sol";
+import { CurveInfo } from "../contracts/Structs.sol";
+import { IERC20Detailed } from "../contracts/interfaces/IERC20Detailed.sol";
+import { IAssimilator } from "../contracts/interfaces/IAssimilator.sol";
+import { IOracle } from "../contracts/interfaces/IOracle.sol";
+import { AssimilatorV2 } from "../contracts/assimilators/AssimilatorV2.sol";
+
+import { MockUser } from "./lib/MockUser.sol";
+import { CheatCodes } from "./lib/CheatCodes.sol";
+import { Mainnet } from "./lib/Address.sol";
+import { DefaultCurve } from "./lib/CurveParams.sol";
 
 contract CurveFactoryV2Test is Test {
     using SafeMath for uint256;

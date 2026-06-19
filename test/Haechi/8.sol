@@ -3,15 +3,15 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "../../src/AssimilatorFactory.sol";
-import "../../src/CurveFactoryV2.sol";
-import "../../src/Curve.sol";
-import "../../src/interfaces/IERC20Detailed.sol";
+import { AssimilatorFactory } from "../../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../../contracts/CurveFactoryV2.sol";
+import { Curve } from "../../contracts/Curve.sol";
+import { IERC20Detailed } from "../../contracts/interfaces/IERC20Detailed.sol";
 
-import ".././lib/MockUser.sol";
-import ".././lib/CheatCodes.sol";
-import ".././lib/Address.sol";
-import ".././lib/CurveParams.sol";
+import { MockUser } from "../lib/MockUser.sol";
+import { CheatCodes } from "../lib/CheatCodes.sol";
+import { Mainnet } from "../lib/Address.sol";
+import { DefaultCurve } from "../lib/CurveParams.sol";
 
 contract FactoryAddressCheck is Test {
     AssimilatorFactory assimilatorFactory;

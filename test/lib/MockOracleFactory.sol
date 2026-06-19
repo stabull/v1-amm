@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "./MockChainlinkOracle.sol";
+import { MockChainlinkOracle } from "./MockChainlinkOracle.sol";
 
 contract MockOracleFactory {
     mapping(bytes32 => address) public oracles;

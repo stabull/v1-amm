@@ -15,9 +15,9 @@
 
 pragma solidity 0.8.19;
 
-import "./Storage.sol";
-import "./lib/UnsafeMath64x64.sol";
-import "./lib/ABDKMath64x64.sol";
+import { Storage } from "./Storage.sol";
+import { UnsafeMath64x64 } from "./lib/UnsafeMath64x64.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
 
 library CurveMath {
 	int128 private constant ONE = 0x10000000000000000;
@@ -115,10 +115,9 @@ library CurveMath {
 			int128 prevAmount;
 			{
 				prevAmount = outputAmt_;
-				outputAmt_ =
-					_omega < _psi
-						? -(_inputAmt + _omega - _psi)
-						: -(_inputAmt + _lambda.mul(_omega - _psi));
+				outputAmt_ = _omega < _psi
+					? -(_inputAmt + _omega - _psi)
+					: -(_inputAmt + _lambda.mul(_omega - _psi));
 				// outputAmt_ = _omega < _psi ? -(_inputAmt + _omega - _psi) : -(_inputAmt +_omega - _psi);
 			}
 

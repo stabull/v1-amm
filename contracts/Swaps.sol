@@ -3,16 +3,15 @@
 pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "./Assimilators.sol";
-import "./Storage.sol";
-import "./CurveMath.sol";
-import "./lib/UnsafeMath64x64.sol";
-import "./lib/ABDKMath64x64.sol";
-import "./CurveFactory.sol";
-import "./Structs.sol";
+import { Assimilators } from "./Assimilators.sol";
+import { Storage } from "./Storage.sol";
+import { CurveMath } from "./CurveMath.sol";
+import { UnsafeMath64x64 } from "./lib/UnsafeMath64x64.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { ICurveFactory } from "./interfaces/ICurveFactory.sol";
+import { OriginSwapData, TargetSwapData, SwapInfo } from "./Structs.sol";
 
 library Swaps {
 	using ABDKMath64x64 for int128;
@@ -311,10 +310,9 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] =
-					oBals_[i] = Assimilators.viewNumeraireBalance(
-						_reserves[i].addr
-					);
+				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
+					_reserves[i].addr
+				);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.intakeRawAndGetBalance(
@@ -361,10 +359,9 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] =
-					oBals_[i] = Assimilators.viewNumeraireBalance(
-						_reserves[i].addr
-					);
+				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
+					_reserves[i].addr
+				);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.outputRawAndGetBalance(
@@ -410,10 +407,9 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] =
-					oBals_[i] = Assimilators.viewNumeraireBalance(
-						curve.assets[i].addr
-					);
+				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
+					curve.assets[i].addr
+				);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.viewNumeraireAmountAndBalance(
@@ -458,10 +454,9 @@ library Swaps {
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
-				nBals_[i] =
-					oBals_[i] = Assimilators.viewNumeraireBalance(
-						curve.assets[i].addr
-					);
+				nBals_[i] = oBals_[i] = Assimilators.viewNumeraireBalance(
+					curve.assets[i].addr
+				);
 			else {
 				int128 _bal;
 				(amt_, _bal) = Assimilators.viewNumeraireAmountAndBalance(

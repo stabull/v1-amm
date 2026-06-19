@@ -2,15 +2,11 @@
 
 pragma solidity 0.8.19;
 
-import "./Assimilators.sol";
-
-import "./Storage.sol";
-
-import "./lib/UnsafeMath64x64.sol";
-import "./lib/ABDKMath64x64.sol";
-
-import "./CurveMath.sol";
-import "./Structs.sol";
+import { UnsafeMath64x64 } from "./lib/UnsafeMath64x64.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { Assimilators } from "./Assimilators.sol";
+import { Storage } from "./Storage.sol";
+import { DepositData, IntakeNumLpRatioInfo } from "./Structs.sol";
 
 library ProportionalLiquidity {
 	using ABDKMath64x64 for uint256;

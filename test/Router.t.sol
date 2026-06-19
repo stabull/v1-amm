@@ -2,24 +2,25 @@
 pragma solidity ^0.8.10;
 
 import "forge-std/Test.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "../src/interfaces/IAssimilator.sol";
-import "../src/interfaces/IOracle.sol";
-import "../src/interfaces/IERC20Detailed.sol";
-import "../src/AssimilatorFactory.sol";
-import "../src/CurveFactoryV2.sol";
-import "../src/Curve.sol";
-import "../src/Structs.sol";
-import "../src/Router.sol";
-import "../src/Config.sol";
-import "../src/lib/ABDKMath64x64.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "./lib/MockUser.sol";
-import "./lib/CheatCodes.sol";
-import "./lib/Address.sol";
-import "./lib/CurveParams.sol";
+import { IAssimilator } from "../contracts/interfaces/IAssimilator.sol";
+import { IOracle } from "../contracts/interfaces/IOracle.sol";
+import { IERC20Detailed } from "../contracts/interfaces/IERC20Detailed.sol";
+import { AssimilatorFactory } from "../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../contracts/CurveFactoryV2.sol";
+import { Curve } from "../contracts/Curve.sol";
+import { CurveInfo } from "../contracts/Structs.sol";
+import { Router } from "../contracts/Router.sol";
+import { Config, IConfig } from "../contracts/Config.sol";
+import { ABDKMath64x64 } from "../contracts/lib/ABDKMath64x64.sol";
+
+import { MockUser } from "./lib/MockUser.sol";
+import { CheatCodes } from "./lib/CheatCodes.sol";
+import { Mainnet } from "./lib/Address.sol";
+import { DefaultCurve } from "./lib/CurveParams.sol";
 
 contract RouterTest is Test {
     using SafeMath for uint256;

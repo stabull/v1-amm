@@ -2,29 +2,25 @@
 pragma solidity ^0.8.10;
 
 import "forge-std/Test.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "../src/interfaces/IAssimilator.sol";
-import "../src/interfaces/IOracle.sol";
-import "../src/interfaces/IERC20Detailed.sol";
-import "../src/AssimilatorFactory.sol";
-import "../src/CurveFactoryV2.sol";
-import "../src/Curve.sol";
-import "../src/Config.sol";
-import "../src/Structs.sol";
-import "../src/Zap.sol";
-import "../src/lib/ABDKMath64x64.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "./lib/MockUser.sol";
-import "./lib/CheatCodes.sol";
-import "./lib/Address.sol";
-import "./lib/CurveParams.sol";
-import "./lib/MockChainlinkOracle.sol";
-import "./lib/MockOracleFactory.sol";
-import "./lib/MockToken.sol";
+import { IOracle } from "../contracts/interfaces/IOracle.sol";
+import { IERC20Detailed } from "../contracts/interfaces/IERC20Detailed.sol";
+import { AssimilatorFactory } from "../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../contracts/CurveFactoryV2.sol";
+import { Curve } from "../contracts/Curve.sol";
+import { Config } from "../contracts/Config.sol";
+import { CurveInfo } from "../contracts/Structs.sol";
 
-import "./utils/Utils.sol";
+import { MockUser } from "./lib/MockUser.sol";
+import { CheatCodes } from "./lib/CheatCodes.sol";
+import { Mainnet } from "./lib/Address.sol";
+import { DefaultCurve } from "./lib/CurveParams.sol";
+import { MockOracleFactory } from "./lib/MockOracleFactory.sol";
+import { MockToken } from "./lib/MockToken.sol";
+
+import { Utils } from "./utils/Utils.sol";
 
 contract V2Test is Test {
     using SafeMath for uint256;
@@ -128,6 +124,7 @@ contract V2Test is Test {
         }
         cheats.stopPrank();
     }
+
     /**
     deploy gold,usdc tokens, their price oracles, assimilators & test swap
     check if v2 factory & it's deployed curve works properly based on both token's price
@@ -187,6 +184,7 @@ contract V2Test is Test {
             noDecUsdcBal.div(100)
         );
     }
+
     // // test swap of forex stable coin(euroc, cadc) usdc
     function testForeignStableCoinSwap(uint256 amt) public {
         cheats.assume(amt > 1000);

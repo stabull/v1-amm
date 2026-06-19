@@ -15,10 +15,11 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "./interfaces/IAssimilator.sol";
-import "./lib/ABDKMath64x64.sol";
-import "./Structs.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+
+import { IAssimilator } from "./interfaces/IAssimilator.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { IntakeNumLpRatioInfo } from "./Structs.sol";
 
 library Assimilators {
 	using ABDKMath64x64 for int128;

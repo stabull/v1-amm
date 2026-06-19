@@ -15,14 +15,14 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "../lib/ABDKMath64x64.sol";
-import "../interfaces/IAssimilator.sol";
-import "../interfaces/IOracle.sol";
+import { ABDKMath64x64 } from "../lib/ABDKMath64x64.sol";
+import { IAssimilator } from "../interfaces/IAssimilator.sol";
+import { IOracle } from "../interfaces/IOracle.sol";
 
 contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 	using ABDKMath64x64 for int128;
@@ -127,7 +127,8 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
+			_rate;
 
 		require(amount_ > 0, "intakeNumeraire/zero-amount!");
 
@@ -216,7 +217,8 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
+			_rate;
 
 		token.safeTransfer(_dst, amount_);
 	}
@@ -228,7 +230,8 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 		uint256 _rate = getRate();
 
 		amount_ =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
+			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
+			_rate;
 	}
 
 	function viewRawAmountLPRatio(
@@ -322,8 +325,8 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 	function transferFee(int128 _amount, address _treasury) external override {
 		uint256 _rate = getRate();
 		if (_amount < 0) _amount = -(_amount);
-		uint256 amount =
-			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) / _rate;
+		uint256 amount = (_amount.mulu(10 ** tokenDecimals) *
+			10 ** oracleDecimals) / _rate;
 		token.safeTransfer(_treasury, amount);
 	}
 }

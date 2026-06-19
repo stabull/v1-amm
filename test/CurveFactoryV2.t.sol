@@ -3,19 +3,21 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "../src/AssimilatorFactory.sol";
-import "../src/CurveFactoryV2.sol";
-import "../src/Curve.sol";
-import "../src/Router.sol";
-import "../src/Config.sol";
-import "../src/interfaces/IERC20Detailed.sol";
+import { AssimilatorFactory } from "../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../contracts/CurveFactoryV2.sol";
+import { Curve } from "../contracts/Curve.sol";
+import { Router } from "../contracts/Router.sol";
+import { Config, IConfig } from "../contracts/Config.sol";
+import { IERC20Detailed } from "../contracts/interfaces/IERC20Detailed.sol";
+import { IOracle } from "../contracts/interfaces/IOracle.sol";
+import { CurveInfo } from "../contracts/Structs.sol";
 
-import "./lib/MockUser.sol";
-import "./lib/CheatCodes.sol";
-import "./lib/Address.sol";
-import "./lib/CurveParams.sol";
-import "./lib/MockChainlinkOracle.sol";
-import "./lib/MockOracleFactory.sol";
+import { MockUser } from "./lib/MockUser.sol";
+import { CheatCodes } from "./lib/CheatCodes.sol";
+import { Mainnet } from "./lib/Address.sol";
+import { DefaultCurve } from "./lib/CurveParams.sol";
+import { MockChainlinkOracle } from "./lib/MockChainlinkOracle.sol";
+import { MockOracleFactory } from "./lib/MockOracleFactory.sol";
 
 contract CurveFactoryV2Test is Test {
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);

@@ -1,14 +1,18 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../../src/Curve.sol";
-import "../../src/interfaces/ICurve.sol";
-import "../../src/interfaces/IFlashCallback.sol";
-import "../../src/interfaces/IERC20Detailed.sol";
-import "../lib/Address.sol";
-import "../lib/LowGasSafeMath.sol";
-import "./FlashStructs.sol";
-import "./Utils.sol";
+
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+import { Curve } from "../../contracts/Curve.sol";
+import { ICurve } from "../../contracts/interfaces/ICurve.sol";
+import { IFlashCallback } from "../../contracts/interfaces/IFlashCallback.sol";
+import { IERC20Detailed } from "../../contracts/interfaces/IERC20Detailed.sol";
+import { Mainnet } from "../lib/Address.sol";
+import { LowGasSafeMath } from "../lib/LowGasSafeMath.sol";
+import { FlashParams, FlashCallbackData } from "./FlashStructs.sol";
+import { Utils } from "./Utils.sol";
 
 contract CurveFlash is IFlashCallback, Test {
     using LowGasSafeMath for uint256;

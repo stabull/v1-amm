@@ -16,31 +16,21 @@
 pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "./interfaces/IFlashCallback.sol";
-
-import "./lib/ABDKMath64x64.sol";
-
-import "./lib/FullMath.sol";
-
-import "./lib/NoDelegateCall.sol";
-
-import "./Orchestrator.sol";
-
-import "./ProportionalLiquidity.sol";
-
-import "./Swaps.sol";
-
-import "./ViewLiquidity.sol";
-
-import "./Storage.sol";
-
-import "./interfaces/IFreeFromUpTo.sol";
-
-import "./interfaces/ICurveFactory.sol";
-
-import "./Structs.sol";
+import { IFlashCallback } from "./interfaces/IFlashCallback.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { FullMath } from "./lib/FullMath.sol";
+import { NoDelegateCall } from "./lib/NoDelegateCall.sol";
+import { Orchestrator } from "./Orchestrator.sol";
+import { ProportionalLiquidity } from "./ProportionalLiquidity.sol";
+import { Swaps } from "./Swaps.sol";
+import { ViewLiquidity } from "./ViewLiquidity.sol";
+import { Storage } from "./Storage.sol";
+import { ICurveFactory } from "./interfaces/ICurveFactory.sol";
+import { OriginSwapData, TargetSwapData, DepositData } from "./Structs.sol";
 
 library Curves {
 	using ABDKMath64x64 for int128;
