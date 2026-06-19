@@ -38,7 +38,7 @@ library Assimilators {
 
 		// solhint-disable-next-line
 		assembly {
-			if eq(_success, 0) {
+			if iszero(_success) {
 				revert(add(returnData_, 0x20), returndatasize())
 			}
 		}
