@@ -23,7 +23,6 @@ library CurveMath {
 	int128 private constant ONE = 0x10000000000000000;
 	int128 private constant MAX = 0x4000000000000000; // .25 in layman's terms
 	int128 private constant MAX_DIFF = -0x10C6F7A0B5EE;
-	int128 private constant ONE_WEI = 0x12;
 
 	using ABDKMath64x64 for int128;
 	using UnsafeMath64x64 for int128;
