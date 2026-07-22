@@ -26,7 +26,7 @@ interface IAssimilator {
 
 	function intakeRawAndGetBalance(
 		uint256 amount
-	) external returns (int128, int128);
+	) external returns (int128 amount_, int128 balance_);
 
 	function intakeNumeraire(int128 amount) external returns (uint256);
 
@@ -46,7 +46,7 @@ interface IAssimilator {
 	function outputRawAndGetBalance(
 		address dst,
 		uint256 amount
-	) external returns (int128, int128);
+	) external returns (int128 amount_, int128 balance_);
 
 	function outputNumeraire(
 		address dst,
@@ -75,7 +75,7 @@ interface IAssimilator {
 	function viewNumeraireAmountAndBalance(
 		address,
 		uint256
-	) external view returns (int128, int128);
+	) external view returns (int128 amount_, int128 balance_);
 
 	function transferFee(int128, address) external;
 }

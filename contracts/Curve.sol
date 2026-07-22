@@ -639,8 +639,8 @@ contract Curve is Storage, NoDelegateCall {
 	/// @notice deposit into the pool with no slippage from the numeraire assets the pool supports
 	/// @param  _deposit the full amount you want to deposit into the pool which will be divided up evenly amongst
 	///                  the numeraire assets of the pool
-	/// @return ( the amount of curves you receive in return for your deposit,
-	///           the amount deposited for each numeraire)
+	/// @return curvesMinted the amount of curves you receive in return for your deposit
+	/// @return deposits the amount deposited for each numeraire
 	function deposit(
 		uint256 _deposit,
 		uint256 _minQuoteAmount,
@@ -657,29 +657,27 @@ contract Curve is Storage, NoDelegateCall {
 		noDelegateCall
 		isNotEmergency
 		isDepositable(address(this), _deposit)
-		returns (uint256, uint256[] memory)
+		returns (uint256 curvesMinted, uint256[] memory deposits)
 	{
 		require(_deposit > 0, "Curve/deposit_below_zero");
 
-		// (curvesMinted_,  deposits_)
 		DepositData memory _depositData;
 		_depositData.deposits = _deposit;
 		_depositData.minQuote = _minQuoteAmount;
 		_depositData.minBase = _minBaseAmount;
 		_depositData.maxQuote = _maxQuoteAmount;
 		_depositData.maxBase = _maxBaseAmount;
-		(
-			uint256 curvesMinted_,
-			uint256[] memory deposits_
-		) = ProportionalLiquidity.proportionalDeposit(curve, _depositData);
-		return (curvesMinted_, deposits_);
+		(curvesMinted, deposits) = ProportionalLiquidity.proportionalDeposit(
+			curve,
+			_depositData
+		);
 	}
 
 	/// @notice view deposits and curves minted a given deposit would return
 	/// @param _deposit the full amount of stablecoins you want to deposit. Divided evenly according to the
 	///                 prevailing proportions of the numeraire assets of the pool
-	/// @return (the amount of curves you receive in return for your deposit,
-	///          the amount deposited for each numeraire)
+	/// @return curvesToMint the amount of curves you receive in return for your deposit
+	/// @return depositsToMake the amount deposited for each numeraire
 	function viewDeposit(
 		uint256 _deposit
 	)
@@ -687,9 +685,8 @@ contract Curve is Storage, NoDelegateCall {
 		view
 		globallyTransactable
 		transactable
-		returns (uint256, uint256[] memory)
+		returns (uint256 curvesToMint, uint256[] memory depositsToMake)
 	{
-		// curvesToMint_, depositsToMake_
 		return ProportionalLiquidity.viewProportionalDeposit(curve, _deposit);
 	}
 

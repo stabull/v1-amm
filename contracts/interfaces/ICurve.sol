@@ -5,7 +5,10 @@ pragma solidity 0.8.19;
 interface ICurve {
 	function viewDeposit(
 		uint256 deposit
-	) external view returns (uint256, uint256[] memory);
+	)
+		external
+		view
+		returns (uint256 curvesToMint, uint256[] memory depositsToMake);
 
 	function deposit(uint256 deposit, uint256 deadline) external;
 
