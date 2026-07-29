@@ -3,16 +3,15 @@
 pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "./Assimilators.sol";
-import "./Storage.sol";
-import "./CurveMath.sol";
-import "./lib/UnsafeMath64x64.sol";
-import "./lib/ABDKMath64x64.sol";
-import "./CurveFactory.sol";
-import "./Structs.sol";
+import { Assimilators } from "./Assimilators.sol";
+import { Storage } from "./Storage.sol";
+import { CurveMath } from "./CurveMath.sol";
+import { UnsafeMath64x64 } from "./lib/UnsafeMath64x64.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { ICurveFactory } from "./interfaces/ICurveFactory.sol";
+import { OriginSwapData, TargetSwapData, SwapInfo } from "./Structs.sol";
 
 library Swaps {
 	using ABDKMath64x64 for int128;
@@ -39,15 +38,16 @@ library Swaps {
 	)
 		private
 		view
-		returns (Storage.Assimilator memory, Storage.Assimilator memory)
+		returns (
+			Storage.Assimilator memory origin,
+			Storage.Assimilator memory target
+		)
 	{
-		Storage.Assimilator memory o_ = curve.assimilators[_o];
-		Storage.Assimilator memory t_ = curve.assimilators[_t];
+		origin = curve.assimilators[_o];
+		target = curve.assimilators[_t];
 
-		require(o_.addr != address(0), "Curve/origin-not-supported");
-		require(t_.addr != address(0), "Curve/target-not-supported");
-
-		return (o_, t_);
+		require(origin.addr != address(0), "Curve/origin-not-supported");
+		require(target.addr != address(0), "Curve/target-not-supported");
 	}
 
 	function originSwap(
@@ -299,14 +299,14 @@ library Swaps {
 			int128 amt_,
 			int128 oGLiq_,
 			int128 nGLiq_,
-			int128[] memory,
-			int128[] memory
+			int128[] memory oBals_,
+			int128[] memory nBals_
 		)
 	{
 		uint256 _length = curve.assets.length;
 
-		int128[] memory oBals_ = new int128[](_length);
-		int128[] memory nBals_ = new int128[](_length);
+		oBals_ = new int128[](_length);
+		nBals_ = new int128[](_length);
 		Storage.Assimilator[] memory _reserves = curve.assets;
 
 		for (uint256 i = 0; i < _length; i++) {
@@ -331,8 +331,6 @@ library Swaps {
 
 		nGLiq_ = nGLiq_.sub(amt_);
 		nBals_[_outputIx] = ABDKMath64x64.sub(nBals_[_outputIx], amt_);
-
-		return (amt_, oGLiq_, nGLiq_, oBals_, nBals_);
 	}
 
 	function getTargetSwapData(
@@ -348,14 +346,14 @@ library Swaps {
 			int128 amt_,
 			int128 oGLiq_,
 			int128 nGLiq_,
-			int128[] memory,
-			int128[] memory
+			int128[] memory oBals_,
+			int128[] memory nBals_
 		)
 	{
 		uint256 _length = curve.assets.length;
 
-		int128[] memory oBals_ = new int128[](_length);
-		int128[] memory nBals_ = new int128[](_length);
+		oBals_ = new int128[](_length);
+		nBals_ = new int128[](_length);
 		Storage.Assimilator[] memory _reserves = curve.assets;
 
 		for (uint256 i = 0; i < _length; i++) {
@@ -381,8 +379,6 @@ library Swaps {
 
 		nGLiq_ = nGLiq_.sub(amt_);
 		nBals_[_outputIx] = ABDKMath64x64.sub(nBals_[_outputIx], amt_);
-
-		return (amt_, oGLiq_, nGLiq_, oBals_, nBals_);
 	}
 
 	function viewOriginSwapData(
@@ -398,13 +394,13 @@ library Swaps {
 			int128 amt_,
 			int128 oGLiq_,
 			int128 nGLiq_,
-			int128[] memory,
-			int128[] memory
+			int128[] memory nBals_,
+			int128[] memory oBals_
 		)
 	{
 		uint256 _length = curve.assets.length;
-		int128[] memory nBals_ = new int128[](_length);
-		int128[] memory oBals_ = new int128[](_length);
+		nBals_ = new int128[](_length);
+		oBals_ = new int128[](_length);
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
@@ -428,8 +424,6 @@ library Swaps {
 
 		nGLiq_ = nGLiq_.sub(amt_);
 		nBals_[_outputIx] = ABDKMath64x64.sub(nBals_[_outputIx], amt_);
-
-		return (amt_, oGLiq_, nGLiq_, nBals_, oBals_);
 	}
 
 	function viewTargetSwapData(
@@ -445,13 +439,13 @@ library Swaps {
 			int128 amt_,
 			int128 oGLiq_,
 			int128 nGLiq_,
-			int128[] memory,
-			int128[] memory
+			int128[] memory nBals_,
+			int128[] memory oBals_
 		)
 	{
 		uint256 _length = curve.assets.length;
-		int128[] memory nBals_ = new int128[](_length);
-		int128[] memory oBals_ = new int128[](_length);
+		nBals_ = new int128[](_length);
+		oBals_ = new int128[](_length);
 
 		for (uint256 i = 0; i < _length; i++) {
 			if (i != _inputIx)
@@ -476,7 +470,5 @@ library Swaps {
 
 		nGLiq_ = nGLiq_.sub(amt_);
 		nBals_[_outputIx] = ABDKMath64x64.sub(nBals_[_outputIx], amt_);
-
-		return (amt_, oGLiq_, nGLiq_, nBals_, oBals_);
 	}
 }

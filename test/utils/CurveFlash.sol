@@ -1,14 +1,18 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../../src/Curve.sol";
-import "../../src/interfaces/ICurve.sol";
-import "../../src/interfaces/IFlashCallback.sol";
-import "../../src/interfaces/IERC20Detailed.sol";
-import "../lib/Address.sol";
-import '../lib/LowGasSafeMath.sol';
-import "./FlashStructs.sol";
-import "./Utils.sol";
+
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+import { Curve } from "../../contracts/Curve.sol";
+import { ICurve } from "../../contracts/interfaces/ICurve.sol";
+import { IFlashCallback } from "../../contracts/interfaces/IFlashCallback.sol";
+import { IERC20Detailed } from "../../contracts/interfaces/IERC20Detailed.sol";
+import { Mainnet } from "../lib/Address.sol";
+import { LowGasSafeMath } from "../lib/LowGasSafeMath.sol";
+import { FlashParams, FlashCallbackData } from "./FlashStructs.sol";
+import { Utils } from "./Utils.sol";
 
 contract CurveFlash is IFlashCallback, Test {
     using LowGasSafeMath for uint256;
@@ -17,22 +21,31 @@ contract CurveFlash is IFlashCallback, Test {
 
     Curve public stbCurve;
     Utils utils;
-    
+
     function flashCallback(
         uint256 fee0,
         uint256 fee1,
         bytes calldata data
-    ) external override {    
-        FlashCallbackData memory decoded = abi.decode(data, (FlashCallbackData));
-        
+    ) external override {
+        FlashCallbackData memory decoded = abi.decode(
+            data,
+            (FlashCallbackData)
+        );
+
         address curve = decoded.poolAddress;
-        
+
         address token0 = ICurve(curve).derivatives(0);
         address token1 = ICurve(curve).derivatives(1);
 
         // Ensure flashed tokens exist
-        assertEq(IERC20(token0).balanceOf(address(this)), uint256(100_000).mul(decoded.decimal0).add(decoded.amount0));
-        assertEq(IERC20(token1).balanceOf(address(this)), uint256(100_000).mul(decoded.decimal1).add(decoded.amount1));
+        assertEq(
+            IERC20(token0).balanceOf(address(this)),
+            uint256(100_000).mul(decoded.decimal0).add(decoded.amount0)
+        );
+        assertEq(
+            IERC20(token1).balanceOf(address(this)),
+            uint256(100_000).mul(decoded.decimal1).add(decoded.amount1)
+        );
 
         uint256 amount0Owed = LowGasSafeMath.add(decoded.amount0, fee0);
         uint256 amount1Owed = LowGasSafeMath.add(decoded.amount1, fee1);

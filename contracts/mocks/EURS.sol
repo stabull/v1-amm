@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract EURS is ERC20 {
 	constructor() ERC20("EURS", "EURS") {
@@ -13,7 +13,7 @@ contract EURS is ERC20 {
 		_mint(to, amount);
 	}
 
-		function decimals() public view virtual override returns (uint8) {
-        return 2;
-    }
+	function decimals() public view virtual override returns (uint8) {
+		return 2;
+	}
 }

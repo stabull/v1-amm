@@ -16,31 +16,21 @@
 pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "./interfaces/IFlashCallback.sol";
-
-import "./lib/ABDKMath64x64.sol";
-
-import "./lib/FullMath.sol";
-
-import "./lib/NoDelegateCall.sol";
-
-import "./Orchestrator.sol";
-
-import "./ProportionalLiquidity.sol";
-
-import "./Swaps.sol";
-
-import "./ViewLiquidity.sol";
-
-import "./Storage.sol";
-
-import "./interfaces/IFreeFromUpTo.sol";
-
-import "./interfaces/ICurveFactory.sol";
-
-import "./Structs.sol";
+import { IFlashCallback } from "./interfaces/IFlashCallback.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { FullMath } from "./lib/FullMath.sol";
+import { NoDelegateCall } from "./lib/NoDelegateCall.sol";
+import { Orchestrator } from "./Orchestrator.sol";
+import { ProportionalLiquidity } from "./ProportionalLiquidity.sol";
+import { Swaps } from "./Swaps.sol";
+import { ViewLiquidity } from "./ViewLiquidity.sol";
+import { Storage } from "./Storage.sol";
+import { ICurveFactory } from "./interfaces/ICurveFactory.sol";
+import { OriginSwapData, TargetSwapData, DepositData } from "./Structs.sol";
 
 library Curves {
 	using ABDKMath64x64 for int128;
@@ -649,8 +639,8 @@ contract Curve is Storage, NoDelegateCall {
 	/// @notice deposit into the pool with no slippage from the numeraire assets the pool supports
 	/// @param  _deposit the full amount you want to deposit into the pool which will be divided up evenly amongst
 	///                  the numeraire assets of the pool
-	/// @return ( the amount of curves you receive in return for your deposit,
-	///           the amount deposited for each numeraire)
+	/// @return curvesMinted the amount of curves you receive in return for your deposit
+	/// @return deposits the amount deposited for each numeraire
 	function deposit(
 		uint256 _deposit,
 		uint256 _minQuoteAmount,
@@ -667,29 +657,27 @@ contract Curve is Storage, NoDelegateCall {
 		noDelegateCall
 		isNotEmergency
 		isDepositable(address(this), _deposit)
-		returns (uint256, uint256[] memory)
+		returns (uint256 curvesMinted, uint256[] memory deposits)
 	{
 		require(_deposit > 0, "Curve/deposit_below_zero");
 
-		// (curvesMinted_,  deposits_)
 		DepositData memory _depositData;
 		_depositData.deposits = _deposit;
 		_depositData.minQuote = _minQuoteAmount;
 		_depositData.minBase = _minBaseAmount;
 		_depositData.maxQuote = _maxQuoteAmount;
 		_depositData.maxBase = _maxBaseAmount;
-		(
-			uint256 curvesMinted_,
-			uint256[] memory deposits_
-		) = ProportionalLiquidity.proportionalDeposit(curve, _depositData);
-		return (curvesMinted_, deposits_);
+		(curvesMinted, deposits) = ProportionalLiquidity.proportionalDeposit(
+			curve,
+			_depositData
+		);
 	}
 
 	/// @notice view deposits and curves minted a given deposit would return
 	/// @param _deposit the full amount of stablecoins you want to deposit. Divided evenly according to the
 	///                 prevailing proportions of the numeraire assets of the pool
-	/// @return (the amount of curves you receive in return for your deposit,
-	///          the amount deposited for each numeraire)
+	/// @return curvesToMint the amount of curves you receive in return for your deposit
+	/// @return depositsToMake the amount deposited for each numeraire
 	function viewDeposit(
 		uint256 _deposit
 	)
@@ -697,9 +685,8 @@ contract Curve is Storage, NoDelegateCall {
 		view
 		globallyTransactable
 		transactable
-		returns (uint256, uint256[] memory)
+		returns (uint256 curvesToMint, uint256[] memory depositsToMake)
 	{
-		// curvesToMint_, depositsToMake_
 		return ProportionalLiquidity.viewProportionalDeposit(curve, _deposit);
 	}
 

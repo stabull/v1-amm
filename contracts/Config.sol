@@ -3,10 +3,11 @@
 pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "./interfaces/IConfig.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+import { IConfig } from "./interfaces/IConfig.sol";
 
 contract Config is Ownable, IConfig, ReentrancyGuard {
 	using Address for address;
@@ -129,9 +130,8 @@ contract Config is Ownable, IConfig, ReentrancyGuard {
 		bool _poolGuarded = poolGuarded[pool];
 		if (!_poolGuarded) {
 			return globalGuarded;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	function getPoolGuardAmount(
@@ -140,9 +140,8 @@ contract Config is Ownable, IConfig, ReentrancyGuard {
 		uint256 _poolGuardAmt = poolGuardAmt[pool];
 		if (_poolGuardAmt == 0) {
 			return globalGuardAmt;
-		} else {
-			return _poolGuardAmt;
 		}
+		return _poolGuardAmt;
 	}
 
 	function getPoolCap(address pool) external view override returns (uint256) {

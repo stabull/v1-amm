@@ -3,19 +3,21 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "../src/AssimilatorFactory.sol";
-import "../src/CurveFactoryV2.sol";
-import "../src/Curve.sol";
-import "../src/Router.sol";
-import "../src/Config.sol";
-import "../src/interfaces/IERC20Detailed.sol";
+import { AssimilatorFactory } from "../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../contracts/CurveFactoryV2.sol";
+import { Curve } from "../contracts/Curve.sol";
+import { Router } from "../contracts/Router.sol";
+import { Config, IConfig } from "../contracts/Config.sol";
+import { IERC20Detailed } from "../contracts/interfaces/IERC20Detailed.sol";
+import { IOracle } from "../contracts/interfaces/IOracle.sol";
+import { CurveInfo } from "../contracts/Structs.sol";
 
-import "./lib/MockUser.sol";
-import "./lib/CheatCodes.sol";
-import "./lib/Address.sol";
-import "./lib/CurveParams.sol";
-import "./lib/MockChainlinkOracle.sol";
-import "./lib/MockOracleFactory.sol";
+import { MockUser } from "./lib/MockUser.sol";
+import { CheatCodes } from "./lib/CheatCodes.sol";
+import { Mainnet } from "./lib/Address.sol";
+import { DefaultCurve } from "./lib/CurveParams.sol";
+import { MockChainlinkOracle } from "./lib/MockChainlinkOracle.sol";
+import { MockOracleFactory } from "./lib/MockOracleFactory.sol";
 
 contract CurveFactoryV2Test is Test {
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
@@ -53,7 +55,7 @@ contract CurveFactoryV2Test is Test {
         liquidityProvider = new MockUser();
         swapper = new MockUser();
         cheats.startPrank(address(treasury));
-        config = new Config(protocolFee,address(treasury));
+        config = new Config(protocolFee, address(treasury));
 
         assimilatorFactory = new AssimilatorFactory();
         curveFactory = new CurveFactoryV2(
@@ -67,7 +69,10 @@ contract CurveFactoryV2Test is Test {
         oracleFactory = new MockOracleFactory();
         fakeCadcOracles = oracleFactory.newOracle(
             // equiv to 1.91 because its 8 decimals
-            address(cadc), "CADC-USDC-ORACLE", 8, 1_91_427_874
+            address(cadc),
+            "CADC-USDC-ORACLE",
+            8,
+            1_91_427_874
         );
 
         assimilatorFactory.setCurveFactory(address(curveFactory));
@@ -159,9 +164,16 @@ contract CurveFactoryV2Test is Test {
 
     function testFail_GlobalFrozenDeposit() public {
         IConfig(address(config)).setGlobalFrozen(true);
-        
+
         cheats.prank(address(liquidityProvider));
-        stbCadcCurve.deposit(100_000,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbCadcCurve.deposit(
+            100_000,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
     }
 
     function test_GlobalFrozeWithdraw() public {
@@ -169,18 +181,31 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 100_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
+        usdc.approve(address(stbCadcCurve), type(uint256).max);
 
-        stbCadcCurve.deposit(100_000e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
-        (uint256 one, uint256[] memory derivatives) = stbCadcCurve.viewDeposit(100_000e18);
+        stbCadcCurve.deposit(
+            100_000e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
+        (uint256 one, uint256[] memory derivatives) = stbCadcCurve.viewDeposit(
+            100_000e18
+        );
         cheats.stopPrank();
 
-        assertApproxEqAbs(stbCadcCurve.balanceOf(address(liquidityProvider)), 100_000e18, 1e6);
+        assertApproxEqAbs(
+            stbCadcCurve.balanceOf(address(liquidityProvider)),
+            100_000e18,
+            1e6
+        );
 
         cheats.startPrank(address(treasury));
         IConfig(address(config)).setGlobalFrozen(true);
-        
+
         // can still withdraw after global freeze
         cheats.startPrank(address(liquidityProvider));
         stbCadcCurve.withdraw(100_000e18 - 1e6, block.timestamp + 60);
@@ -199,10 +224,17 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), _gGuardAmt / 1e12);
 
         cheats.startPrank(address(liquidityProvider));
-        cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
+        usdc.approve(address(stbCadcCurve), type(uint256).max);
 
-        stbCadcCurve.deposit(_gGuardAmt,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbCadcCurve.deposit(
+            _gGuardAmt,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
     }
 
@@ -218,10 +250,17 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 200_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        cadc.approve(address(stbCadcCurve), type(uint).max);
-        usdc.approve(address(stbCadcCurve), type(uint).max);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
+        usdc.approve(address(stbCadcCurve), type(uint256).max);
 
-        stbCadcCurve.deposit(100_000e18 + _extraAmt, 0, 0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbCadcCurve.deposit(
+            100_000e18 + _extraAmt,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
     }
 
@@ -234,17 +273,24 @@ contract CurveFactoryV2Test is Test {
         // set global guard amount to 100k
         config.setGlobalGuardAmount(100_000e18);
         // while global guard amt is 100k, Euroc pool guard amt is 80k
-        config.setPoolGuarded( address(stbEurocCurve), true );
+        config.setPoolGuarded(address(stbEurocCurve), true);
         config.setPoolGuardAmount(address(stbEurocCurve), 80_000e18);
 
         deal(address(euroc), address(liquidityProvider), 300_000e6);
         deal(address(usdc), address(liquidityProvider), 300_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
         // deposit less than 80k
-        stbEurocCurve.deposit(80_000e18 - _extraAmt,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbEurocCurve.deposit(
+            80_000e18 - _extraAmt,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
     }
 
@@ -256,17 +302,24 @@ contract CurveFactoryV2Test is Test {
         // set global guard amount to 100k
         config.setGlobalGuardAmount(100_000e18);
         // while global guard amt is 100k, Euroc pool guard amt is 80k
-        config.setPoolGuarded( address(stbEurocCurve), true );
+        config.setPoolGuarded(address(stbEurocCurve), true);
         config.setPoolGuardAmount(address(stbEurocCurve), 80_000e18);
 
         deal(address(euroc), address(liquidityProvider), 300_000e6);
         deal(address(usdc), address(liquidityProvider), 300_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
         // deposit more than 80k
-        stbEurocCurve.deposit(80_000e18 + _extraAmt,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbEurocCurve.deposit(
+            80_000e18 + _extraAmt,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
     }
 
@@ -279,10 +332,17 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 200_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
 
-        stbEurocCurve.deposit(100_000e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbEurocCurve.deposit(
+            100_000e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
     }
 
@@ -296,49 +356,79 @@ contract CurveFactoryV2Test is Test {
         deal(address(usdc), address(liquidityProvider), 200_000e6);
 
         cheats.startPrank(address(liquidityProvider));
-        euroc.approve(address(stbEurocCurve), type(uint).max);
-        usdc.approve(address(stbEurocCurve), type(uint).max);
+        euroc.approve(address(stbEurocCurve), type(uint256).max);
+        usdc.approve(address(stbEurocCurve), type(uint256).max);
 
-        stbEurocCurve.deposit(100_000e18 + _extraAmt,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbEurocCurve.deposit(
+            100_000e18 + _extraAmt,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
     }
 
-    function testFail_TargetSwapFreeMoney() public { 
-        // set this for no fuzzing 
+    function testFail_TargetSwapFreeMoney() public {
+        // set this for no fuzzing
         // CADC is worth 1.9 USDC right here
         uint256 price = 191427874;
         // this is like 500k of USDC (249k * 1.9)
         uint256 router_amounts = 490_00e6;
         uint256 amounts = 250_000e18;
-        
+
         cheats.startPrank(address(liquidityProvider));
-        deal(address(cadc), address(liquidityProvider), 1500000e18 * 1e8 / price); 
-        deal(address(usdc), address(liquidityProvider), 1500000e6); 
-        cadc.approve(address(stbCadcCurve), type(uint256).max); 
+        deal(
+            address(cadc),
+            address(liquidityProvider),
+            (1500000e18 * 1e8) / price
+        );
+        deal(address(usdc), address(liquidityProvider), 1500000e6);
+        cadc.approve(address(stbCadcCurve), type(uint256).max);
         usdc.approve(address(stbCadcCurve), type(uint256).max);
-        
+
         // the LP provides $2M worth of LP
-        stbCadcCurve.deposit(2_000_000e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        stbCadcCurve.deposit(
+            2_000_000e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
-        
+
         cheats.startPrank(address(swapper));
         deal(address(usdc), address(swapper), 1_500_000e6);
-        
+
         cadc.approve(address(stbCadcCurve), type(uint256).max);
         usdc.approve(address(stbCadcCurve), type(uint256).max);
 
         cadc.approve(address(router), type(uint256).max);
         usdc.approve(address(router), type(uint256).max);
-        
+
         // TARGET CADC amounts should be in cadc
-        uint256 amountReal = stbCadcCurve.targetSwap(address(usdc), address(cadc), type(uint256).max, amounts, block.timestamp + 60);
-        uint256 amountRecv = stbCadcCurve.originSwap(address(cadc), address(usdc), cadc.balanceOf(address(swapper)), 0, block.timestamp + 60);
+        uint256 amountReal = stbCadcCurve.targetSwap(
+            address(usdc),
+            address(cadc),
+            type(uint256).max,
+            amounts,
+            block.timestamp + 60
+        );
+        uint256 amountRecv = stbCadcCurve.originSwap(
+            address(cadc),
+            address(usdc),
+            cadc.balanceOf(address(swapper)),
+            0,
+            block.timestamp + 60
+        );
 
         cheats.stopPrank();
 
         require(usdc.balanceOf(address(swapper)) >= 1510000e6, "free money!!");
     }
-    
+
     function testFail_invalidNewCurveBase() public {
         cheats.startPrank(address(treasury));
         CurveInfo memory invalidCurveInfo = CurveInfo(
@@ -357,7 +447,7 @@ contract CurveFactoryV2Test is Test {
             DefaultCurve.EPSILON,
             DefaultCurve.LAMBDA
         );
-        
+
         stbEurocCurve = curveFactory.newCurve(invalidCurveInfo);
         cheats.stopPrank();
     }
@@ -380,7 +470,7 @@ contract CurveFactoryV2Test is Test {
             DefaultCurve.EPSILON,
             DefaultCurve.LAMBDA
         );
-        
+
         stbEurocCurve = curveFactory.newCurve(invalidCurveInfo);
         cheats.stopPrank();
     }
@@ -403,7 +493,7 @@ contract CurveFactoryV2Test is Test {
             DefaultCurve.EPSILON,
             DefaultCurve.LAMBDA
         );
-        
+
         stbEurocCurve = curveFactory.newCurve(invalidCurveInfo);
         cheats.stopPrank();
     }

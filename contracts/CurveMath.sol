@@ -15,15 +15,14 @@
 
 pragma solidity 0.8.19;
 
-import "./Storage.sol";
-import "./lib/UnsafeMath64x64.sol";
-import "./lib/ABDKMath64x64.sol";
+import { Storage } from "./Storage.sol";
+import { UnsafeMath64x64 } from "./lib/UnsafeMath64x64.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
 
 library CurveMath {
 	int128 private constant ONE = 0x10000000000000000;
 	int128 private constant MAX = 0x4000000000000000; // .25 in layman's terms
 	int128 private constant MAX_DIFF = -0x10C6F7A0B5EE;
-	int128 private constant ONE_WEI = 0x12;
 
 	using ABDKMath64x64 for int128;
 	using UnsafeMath64x64 for int128;
@@ -130,11 +129,10 @@ library CurveMath {
 
 				enforceSwapInvariant(_oGLiq, _omega, _nGLiq, _psi);
 				return outputAmt_;
-			} else {
-				_nGLiq = _oGLiq + _inputAmt + outputAmt_;
-
-				_nBals[_outputIndex] = _oBals[_outputIndex].add(outputAmt_);
 			}
+			_nGLiq = _oGLiq + _inputAmt + outputAmt_;
+
+			_nBals[_outputIndex] = _oBals[_outputIndex].add(outputAmt_);
 		}
 
 		revert("Curve/swap-convergence-failed");

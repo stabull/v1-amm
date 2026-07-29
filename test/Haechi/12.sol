@@ -1,30 +1,30 @@
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
 import "forge-std/Test.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "../../src/interfaces/IAssimilator.sol";
-import "../../src/interfaces/IOracle.sol";
-import "../../src/interfaces/IERC20Detailed.sol";
-import "../../src/AssimilatorFactory.sol";
-import "../../src/CurveFactoryV2.sol";
-import "../../src/Curve.sol";
-import "../../src/Config.sol";
-import "../../src/Structs.sol";
-import "../../src/lib/ABDKMath64x64.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import ".././lib/MockUser.sol";
-import ".././lib/CheatCodes.sol";
-import ".././lib/Address.sol";
-import ".././lib/CurveParams.sol";
-import ".././lib/MockChainlinkOracle.sol";
-import ".././lib/MockOracleFactory.sol";
-import ".././lib/MockToken.sol";
+import { IAssimilator } from "../../contracts/interfaces/IAssimilator.sol";
+import { IOracle } from "../../contracts/interfaces/IOracle.sol";
+import { IERC20Detailed } from "../../contracts/interfaces/IERC20Detailed.sol";
+import { AssimilatorFactory } from "../../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../../contracts/CurveFactoryV2.sol";
+import { Curve } from "../../contracts/Curve.sol";
+import { Config } from "../../contracts/Config.sol";
+import { CurveInfo } from "../../contracts/Structs.sol";
+import { ABDKMath64x64 } from "../../contracts/lib/ABDKMath64x64.sol";
 
-import ".././utils/Utils.sol";
+import { MockUser } from "../lib/MockUser.sol";
+import { CheatCodes } from "../lib/CheatCodes.sol";
+import { Mainnet } from "../lib/Address.sol";
+import { DefaultCurve } from "../lib/CurveParams.sol";
+import { MockChainlinkOracle } from "../lib/MockChainlinkOracle.sol";
+import { MockOracleFactory } from "../lib/MockOracleFactory.sol";
+import { MockToken } from "../lib/MockToken.sol";
+
+import { Utils } from "../utils/Utils.sol";
 
 contract SwapFeeTest is Test {
     using SafeMath for uint256;
@@ -75,7 +75,7 @@ contract SwapFeeTest is Test {
         oracles.push(IOracle(Mainnet.CHAINLINK_CAD_USD));
         oracles.push(IOracle(Mainnet.CHAINLINK_USDC_USD));
         cheats.startPrank(address(accounts[2]));
-        config = new Config(protocolFee,address(accounts[2]));
+        config = new Config(protocolFee, address(accounts[2]));
         // deploy new assimilator factory & curveFactory v2
         assimFactory = new AssimilatorFactory();
         curveFactory = new CurveFactoryV2(
@@ -152,7 +152,14 @@ contract SwapFeeTest is Test {
 
             // first deposit
             cheats.startPrank(address(accounts[0]));
-            curves[i + 1].deposit(1000000000 * 1e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+            curves[i + 1].deposit(
+                1000000000 * 1e18,
+                0,
+                0,
+                type(uint256).max,
+                type(uint256).max,
+                block.timestamp + 60
+            );
             cheats.stopPrank();
 
             cheats.startPrank(address(accounts[1]));
@@ -191,7 +198,14 @@ contract SwapFeeTest is Test {
 
             // first deposit
             cheats.startPrank(address(accounts[0]));
-            curves[i + 1].deposit(1000000000 * 1e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+            curves[i + 1].deposit(
+                1000000000 * 1e18,
+                0,
+                0,
+                type(uint256).max,
+                type(uint256).max,
+                block.timestamp + 60
+            );
             cheats.stopPrank();
 
             cheats.startPrank(address(accounts[1]));

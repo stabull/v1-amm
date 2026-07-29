@@ -5,7 +5,7 @@
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// This program is disstributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -17,19 +17,16 @@ pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
 // Finds new Curves! logs their addresses and provides `isCurve(address) -> (bool)`
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-import "./Curve.sol";
-import "./interfaces/IFreeFromUpTo.sol";
-import "./AssimilatorFactory.sol";
-import "./assimilators/AssimilatorV2.sol";
-import "./interfaces/ICurveFactory.sol";
-import "./interfaces/IAssimilatorFactory.sol";
-import "./interfaces/IERC20Detailed.sol";
-import "./interfaces/IConfig.sol";
-import "./Structs.sol";
+import { Curve } from "./Curve.sol";
+import { AssimilatorV2 } from "./assimilators/AssimilatorV2.sol";
+import { ICurveFactory } from "./interfaces/ICurveFactory.sol";
+import { IAssimilatorFactory } from "./interfaces/IAssimilatorFactory.sol";
+import { IERC20Detailed } from "./interfaces/IERC20Detailed.sol";
+import { IConfig } from "./interfaces/IConfig.sol";
+import { CurveInfo } from "./Structs.sol";
 
 contract CurveFactoryV2 is ICurveFactory, Ownable {
 	using Address for address;
@@ -203,26 +200,30 @@ contract CurveFactoryV2 is ICurveFactory, Ownable {
 			if (chainID == 1) {
 				// Ethereum Mainnet
 				return 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-			} else if (chainID == 137) {
+			}
+			if (chainID == 137) {
 				// Polygon Mainnet
 				return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-			} else if (chainID == 42161) {
+			}
+			if (chainID == 42161) {
 				// Arbitrum One
 				return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
-			} else if (chainID == 8453) {
+			}
+			if (chainID == 8453) {
 				// Base Mainnet
 				return 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
-			} else if (chainID == 84532) {
+			}
+			if (chainID == 84532) {
 				// Base Sepolia
 				return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-			} else if (chainID == 80002) {
+			}
+			if (chainID == 80002) {
 				// Polygon Amoy Testnet
 				return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-			} else {
-				return address(0);
 			}
-		} else {
-			return USDC;
+
+			return address(0);
 		}
+		return USDC;
 	}
 }

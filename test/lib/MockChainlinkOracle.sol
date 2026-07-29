@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "../../src/interfaces/IOracle.sol";
+import { IOracle } from "../../contracts/interfaces/IOracle.sol";
 
 contract MockChainlinkOracle is IOracle {
     string public name;
@@ -21,7 +21,9 @@ contract MockChainlinkOracle is IOracle {
         underlying = _token;
         name = _name;
         decimals = _decimals;
-        description = string(abi.encodePacked("this is a price feed for ", name));
+        description = string(
+            abi.encodePacked("this is a price feed for ", name)
+        );
         price = _price;
     }
 
@@ -42,11 +44,15 @@ contract MockChainlinkOracle is IOracle {
 
     function confirmAggregator(address _aggregator) external override {}
 
-    function getAnswer(uint256 _roundId) external view override returns (int256) {
+    function getAnswer(
+        uint256 _roundId
+    ) external view override returns (int256) {
         return price;
     }
 
-    function getRoundData(uint80 _roundId)
+    function getRoundData(
+        uint80 _roundId
+    )
         external
         view
         override
@@ -65,7 +71,9 @@ contract MockChainlinkOracle is IOracle {
         answeredInRound = 0;
     }
 
-    function getTimestamp(uint256 _roundId) external view override returns (uint256) {
+    function getTimestamp(
+        uint256 _roundId
+    ) external view override returns (uint256) {
         return block.timestamp;
     }
 
@@ -118,7 +126,9 @@ contract MockChainlinkOracle is IOracle {
         return dummyAddress;
     }
 
-    function proposedGetRoundData(uint80 _roundId)
+    function proposedGetRoundData(
+        uint80 _roundId
+    )
         external
         view
         override

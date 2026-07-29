@@ -16,11 +16,12 @@
 pragma solidity 0.8.19;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "./Curve.sol";
+import { Curve } from "./Curve.sol";
 
 contract Zap {
 	using SafeMath for uint256;
@@ -56,27 +57,32 @@ contract Zap {
 		if (chainID == 1) {
 			// Ethereum Mainnet
 			return 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-		} else if (chainID == 31337) {
+		}
+		if (chainID == 31337) {
 			// Hardhat Local Network
 			return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-		} else if (chainID == 42161) {
+		}
+		if (chainID == 42161) {
 			// Arbitrum One
 			return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
-		} else if (chainID == 137) {
+		}
+		if (chainID == 137) {
 			// Polygon Mainnet
 			return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-		} else if (chainID == 8453) {
+		}
+		if (chainID == 8453) {
 			// Base Mainnet
 			return 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
-		} else if (chainID == 84532) {
+		}
+		if (chainID == 84532) {
 			// Base Sepolia
 			return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-		} else if (chainID == 80002) {
+		}
+		if (chainID == 80002) {
 			// Polygon Amoy Testnet
 			return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-		} else {
-			return address(0);
 		}
+		return address(0);
 	}
 
 	/// @notice Zaps from a quote token (non-USDC) into the LP pool
@@ -156,25 +162,18 @@ contract Zap {
 			);
 			USDC.safeTransfer(msg.sender, usdcAmount);
 			return usdcAmount;
-		} else {
-			uint256 usdcAmount = USDC.balanceOf(address(this));
-			USDC.safeApprove(_curve, 0);
-			USDC.safeApprove(_curve, type(uint256).max);
-			Curve(_curve).originSwap(
-				address(USDC),
-				base,
-				usdcAmount,
-				0,
-				_deadline
-			);
-			uint256 baseAmount = IERC20(base).balanceOf(address(this));
-			require(
-				baseAmount >= _minTokenAmount,
-				"!Unzap/not-enough-token-amount"
-			);
-			IERC20(base).safeTransfer(msg.sender, baseAmount);
-			return baseAmount;
 		}
+		uint256 usdcAmount = USDC.balanceOf(address(this));
+		USDC.safeApprove(_curve, 0);
+		USDC.safeApprove(_curve, type(uint256).max);
+		Curve(_curve).originSwap(address(USDC), base, usdcAmount, 0, _deadline);
+		uint256 baseAmount = IERC20(base).balanceOf(address(this));
+		require(
+			baseAmount >= _minTokenAmount,
+			"!Unzap/not-enough-token-amount"
+		);
+		IERC20(base).safeTransfer(msg.sender, baseAmount);
+		return baseAmount;
 	}
 
 	/// @notice Zaps from a single token into the LP pool
@@ -306,57 +305,32 @@ contract Zap {
 	/// @param _curve The address of the curve
 	/// @param _zapAmount The amount to zap, denominated in the ERC20's decimal placing
 	/// @param isFromBase Is the swap originating from the base?
-	/// @return address - The address of the base
-	/// @return uint256 - The amount to swap
+	/// @return base - The address of the base
+	/// @return swapAmount - The amount to swap
 	function calcSwapAmountForZap(
 		address _curve,
 		uint256 _zapAmount,
 		bool isFromBase
-	) public view returns (address, uint256) {
+	) public view returns (address base, uint256 swapAmount) {
 		// Base will always be index 0
-		address base = Curve(_curve).reserves(0);
-
-		// Ratio of base quote in 18 decimals
-		uint256 curveBaseBal = IERC20(base).balanceOf(_curve);
-		uint8 curveBaseDecimals = ERC20(base).decimals();
-		uint256 curveQuoteBal = USDC.balanceOf(_curve);
+		base = Curve(_curve).reserves(0);
 
 		// How much user wants to swap
 		uint256 initialSwapAmount = _zapAmount.div(2);
 
-		// Calc Base Swap Amount
-		if (isFromBase) {
-			return (
-				base,
-				_calcBaseSwapAmount(
-					initialSwapAmount,
-					ZapData({
-						curve: _curve,
-						base: base,
-						zapAmount: _zapAmount,
-						curveBaseBal: curveBaseBal,
-						curveBaseDecimals: curveBaseDecimals,
-						curveQuoteBal: curveQuoteBal
-					})
-				)
-			);
-		}
+		ZapData memory zapData = ZapData({
+			curve: _curve,
+			base: base,
+			zapAmount: _zapAmount,
+			// Ratio of base quote in 18 decimals
+			curveBaseBal: IERC20(base).balanceOf(_curve),
+			curveBaseDecimals: ERC20(base).decimals(),
+			curveQuoteBal: USDC.balanceOf(_curve)
+		});
 
-		// Calc quote swap amount
-		return (
-			base,
-			_calcQuoteSwapAmount(
-				initialSwapAmount,
-				ZapData({
-					curve: _curve,
-					base: base,
-					zapAmount: _zapAmount,
-					curveBaseBal: curveBaseBal,
-					curveBaseDecimals: curveBaseDecimals,
-					curveQuoteBal: curveQuoteBal
-				})
-			)
-		);
+		swapAmount = isFromBase
+			? _calcBaseSwapAmount(initialSwapAmount, zapData) // Calc Base Swap Amount
+			: _calcQuoteSwapAmount(initialSwapAmount, zapData); // Calc Quote swap amount
 	}
 
 	// **** Helper functions ****
@@ -366,13 +340,17 @@ contract Zap {
 	///         base/quote amounts
 	/// @param _curve The address of the curve
 	/// @param _quoteAmount The amount of quote tokens
-	/// @return uint256 - The deposit amount
-	/// @return uint256 - The LPTs received
-	/// @return uint256[] memory - The baseAmount and quoteAmount
+	/// @return depositAmount - The deposit amount
+	/// @return lps - The LPTs received
+	/// @return outs - The baseAmount and quoteAmount
 	function calcMaxDepositAmountGivenQuote(
 		address _curve,
 		uint256 _quoteAmount
-	) public view returns (uint256, uint256, uint256[] memory) {
+	)
+		public
+		view
+		returns (uint256 depositAmount, uint256 lps, uint256[] memory outs)
+	{
 		uint256 maxBaseAmount = calcMaxBaseForDeposit(_curve, _quoteAmount);
 		address base = Curve(_curve).reserves(0);
 
@@ -394,13 +372,17 @@ contract Zap {
 	///         base/quote amounts
 	/// @param _curve The address of the curve
 	/// @param _baseAmount The amount of base tokens
-	/// @return uint256 - The deposit amount
-	/// @return uint256 - The LPTs received
-	/// @return uint256[] memory - The baseAmount and quoteAmount
+	/// @return depositAmount - The deposit amount
+	/// @return lps - The LPTs received
+	/// @return outs - The baseAmount and quoteAmount
 	function calcMaxDepositAmountGivenBase(
 		address _curve,
 		uint256 _baseAmount
-	) public view returns (uint256, uint256, uint256[] memory) {
+	)
+		public
+		view
+		returns (uint256 depositAmount, uint256 lps, uint256[] memory outs)
+	{
 		uint256 maxQuoteAmount = calcMaxQuoteForDeposit(_curve, _baseAmount);
 		address base = Curve(_curve).reserves(0);
 
@@ -499,7 +481,7 @@ contract Zap {
 				return swapAmount;
 			}
 			// Otherwise, we keep iterating
-			else if (userRatio > curveRatio) {
+			if (userRatio > curveRatio) {
 				// We swapping too much
 				swapAmount = swapAmount.sub(delta);
 			} else if (userRatio < curveRatio) {
@@ -561,7 +543,7 @@ contract Zap {
 				return swapAmount;
 			}
 			// Otherwise, we keep iterating
-			else if (userRatio > curveRatio) {
+			if (userRatio > curveRatio) {
 				// We swapping too little
 				swapAmount = swapAmount.add(delta);
 			} else if (userRatio < curveRatio) {
@@ -587,14 +569,18 @@ contract Zap {
 	/// @param _base  The base address in the curve
 	/// @param dd     Deposit data
 
-	/// @return uint256 - The deposit amount
-	/// @return uint256 - The LPTs received
-	/// @return uint256[] memory - The baseAmount and quoteAmount
+	/// @return depositAmount - The deposit amount
+	/// @return lps - The LPTs received
+	/// @return outs - The baseAmount and quoteAmount
 	function _calcDepositAmount(
 		address _curve,
 		address _base,
 		DepositData memory dd
-	) internal view returns (uint256, uint256, uint256[] memory) {
+	)
+		internal
+		view
+		returns (uint256 depositAmount, uint256 lps, uint256[] memory outs)
+	{
 		// Calculate _depositAmount
 		uint8 curveBaseDecimals = ERC20(_base).decimals();
 		uint256 curveRatio = IERC20(_base)
@@ -612,15 +598,13 @@ contract Zap {
 		);
 
 		// Trim out decimal values
-		uint256 depositAmount = usdcDepositAmount.add(
+		depositAmount = usdcDepositAmount.add(
 			baseDepositAmount.mul(1e18).div(curveRatio)
 		);
 		depositAmount = _roundDown(depositAmount);
 
 		// // Make sure we have enough of our inputs
-		(uint256 lps, uint256[] memory outs) = Curve(_curve).viewDeposit(
-			depositAmount
-		);
+		(lps, outs) = Curve(_curve).viewDeposit(depositAmount);
 
 		uint256 baseDelta = outs[0] > dd.maxBaseAmount
 			? outs[0].sub(dd.curBaseAmount)
@@ -636,7 +620,5 @@ contract Zap {
 
 			return _calcDepositAmount(_curve, _base, dd);
 		}
-
-		return (depositAmount, lps, outs);
 	}
 }

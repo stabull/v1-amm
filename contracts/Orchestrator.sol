@@ -15,12 +15,13 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "./lib/ABDKMath64x64.sol";
-import "./Storage.sol";
-import "./CurveMath.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { Storage } from "./Storage.sol";
+import { CurveMath } from "./CurveMath.sol";
+import { Assimilators } from "./Assimilators.sol";
 
 library Orchestrator {
 	using SafeERC20 for IERC20;
@@ -233,7 +234,10 @@ library Orchestrator {
 		require(_weight < 1e18, "Curve/weight-must-be-less-than-one");
 
 		if (_numeraire != _reserve)
-			IERC20(_numeraire).safeApprove(_reserveApproveTo, type(uint).max);
+			IERC20(_numeraire).safeApprove(
+				_reserveApproveTo,
+				type(uint256).max
+			);
 
 		Storage.Assimilator storage _numeraireAssimilator = curve.assimilators[
 			_numeraire

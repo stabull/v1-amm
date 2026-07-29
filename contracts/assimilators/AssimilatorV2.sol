@@ -15,14 +15,14 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "../lib/ABDKMath64x64.sol";
-import "../interfaces/IAssimilator.sol";
-import "../interfaces/IOracle.sol";
+import { ABDKMath64x64 } from "../lib/ABDKMath64x64.sol";
+import { IAssimilator } from "../interfaces/IAssimilator.sol";
+import { IOracle } from "../interfaces/IOracle.sol";
 
 contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 	using ABDKMath64x64 for int128;
@@ -52,36 +52,41 @@ contract AssimilatorV2 is IAssimilator, ReentrancyGuard {
 		usdc = IERC20(quoteAddress());
 	}
 
-function quoteAddress() internal view returns (address) {
-	uint256 chainID;
-	assembly {
-		chainID := chainid()
-	}
-	if (chainID == 1) {
-		// Ethereum Mainnet
-		return 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-	} else if (chainID == 31337) {
-		// Hardhat Local Network
-		return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-	} else if (chainID == 42161) {
-		// Arbitrum One
-		return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
-	} else if (chainID == 137) {
-		// Polygon Mainnet
-		return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-	} else if (chainID == 8453) {
-		// Base Mainnet
-		return 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
-	} else if (chainID == 84532) {
-		// Base Sepolia
-		return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-	} else if (chainID == 80002) {
-		// Polygon Amoy Testnet
-		return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
-	} else {
+	function quoteAddress() internal view returns (address) {
+		uint256 chainID;
+		assembly {
+			chainID := chainid()
+		}
+		if (chainID == 1) {
+			// Ethereum Mainnet
+			return 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+		}
+		if (chainID == 31337) {
+			// Hardhat Local Network
+			return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
+		}
+		if (chainID == 42161) {
+			// Arbitrum One
+			return 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
+		}
+		if (chainID == 137) {
+			// Polygon Mainnet
+			return 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
+		}
+		if (chainID == 8453) {
+			// Base Mainnet
+			return 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+		}
+		if (chainID == 84532) {
+			// Base Sepolia
+			return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
+		}
+		if (chainID == 80002) {
+			// Polygon Amoy Testnet
+			return 0xe66B091638aBeAa631CfA99b8c9B26Be844c2756;
+		}
 		return address(0);
 	}
-}
 
 	function getRate() public view override returns (uint256) {
 		(, int256 price, , , ) = oracle.latestRoundData();
@@ -129,9 +134,9 @@ function quoteAddress() internal view returns (address) {
 		amount_ =
 			(_amount.mulu(10 ** tokenDecimals) * 10 ** oracleDecimals) /
 			_rate;
-		
+
 		require(amount_ > 0, "intakeNumeraire/zero-amount!");
-		
+
 		token.safeTransferFrom(msg.sender, address(this), amount_);
 	}
 
@@ -171,7 +176,7 @@ function quoteAddress() internal view returns (address) {
 			);
 		}
 		require(amount_ > 0, "intakeNumeraire/zero-amount!");
-		
+
 		token.safeTransferFrom(msg.sender, address(this), amount_);
 	}
 

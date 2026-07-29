@@ -5,7 +5,7 @@
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// This program is disstributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -17,11 +17,10 @@ pragma solidity 0.8.19;
 
 // Finds new Curves! logs their addresses and provides `isCurve(address) -> (bool)`
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "./interfaces/IFreeFromUpTo.sol";
-import "./Curve.sol";
+import { Curve } from "./Curve.sol";
 
 contract CurveFactory is Ownable, ReentrancyGuard {
 	event NewCurve(

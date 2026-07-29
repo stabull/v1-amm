@@ -2,15 +2,11 @@
 
 pragma solidity 0.8.19;
 
-import "./Assimilators.sol";
-
-import "./Storage.sol";
-
-import "./lib/UnsafeMath64x64.sol";
-import "./lib/ABDKMath64x64.sol";
-
-import "./CurveMath.sol";
-import "./Structs.sol";
+import { UnsafeMath64x64 } from "./lib/UnsafeMath64x64.sol";
+import { ABDKMath64x64 } from "./lib/ABDKMath64x64.sol";
+import { Assimilators } from "./Assimilators.sol";
+import { Storage } from "./Storage.sol";
+import { DepositData, IntakeNumLpRatioInfo } from "./Structs.sol";
 
 library ProportionalLiquidity {
 	using ABDKMath64x64 for uint256;
@@ -25,12 +21,12 @@ library ProportionalLiquidity {
 	function proportionalDeposit(
 		Storage.Curve storage curve,
 		DepositData memory depositData
-	) external returns (uint256 curves_, uint256[] memory) {
+	) external returns (uint256 curves_, uint256[] memory deposits_) {
 		int128 __deposit = depositData.deposits.divu(1e18);
 
 		uint256 _length = curve.assets.length;
 
-		uint256[] memory deposits_ = new uint256[](_length);
+		deposits_ = new uint256[](_length);
 
 		(
 			int128 _oGLiq,
@@ -88,14 +84,12 @@ library ProportionalLiquidity {
 			"Proportional Liquidity/can't mint negative amount"
 		);
 		mint(curve, msg.sender, curves_ = _newShells.mulu(1e18));
-
-		return (curves_, deposits_);
 	}
 
 	function viewProportionalDeposit(
 		Storage.Curve storage curve,
 		uint256 _deposit
-	) external view returns (uint256 curves_, uint256[] memory) {
+	) external view returns (uint256 curves_, uint256[] memory deposits_) {
 		int128 __deposit = _deposit.divu(1e18);
 
 		uint256 _length = curve.assets.length;
@@ -105,7 +99,7 @@ library ProportionalLiquidity {
 			int128[] memory _oBals
 		) = getGrossLiquidityAndBalancesForDeposit(curve);
 
-		uint256[] memory deposits_ = new uint256[](_length);
+		deposits_ = new uint256[](_length);
 
 		// No liquidity
 		if (_oGLiq == 0) {
@@ -144,8 +138,6 @@ library ProportionalLiquidity {
 		}
 
 		curves_ = _newShells.mulu(1e18);
-
-		return (curves_, deposits_);
 	}
 
 	function proportionalWithdraw(
@@ -202,10 +194,14 @@ library ProportionalLiquidity {
 
 	function getGrossLiquidityAndBalancesForDeposit(
 		Storage.Curve storage curve
-	) internal view returns (int128 grossLiquidity_, int128[] memory) {
+	)
+		internal
+		view
+		returns (int128 grossLiquidity_, int128[] memory balances_)
+	{
 		uint256 _length = curve.assets.length;
 
-		int128[] memory balances_ = new int128[](_length);
+		balances_ = new int128[](_length);
 		uint256 _baseWeight = curve.weights[0].mulu(1e18);
 		uint256 _quoteWeight = curve.weights[1].mulu(1e18);
 
@@ -219,16 +215,18 @@ library ProportionalLiquidity {
 			balances_[i] = _bal;
 			grossLiquidity_ += _bal;
 		}
-
-		return (grossLiquidity_, balances_);
 	}
 
 	function getGrossLiquidityAndBalances(
 		Storage.Curve storage curve
-	) internal view returns (int128 grossLiquidity_, int128[] memory) {
+	)
+		internal
+		view
+		returns (int128 grossLiquidity_, int128[] memory balances_)
+	{
 		uint256 _length = curve.assets.length;
 
-		int128[] memory balances_ = new int128[](_length);
+		balances_ = new int128[](_length);
 
 		for (uint256 i = 0; i < _length; i++) {
 			int128 _bal = Assimilators.viewNumeraireBalance(
@@ -238,8 +236,6 @@ library ProportionalLiquidity {
 			balances_[i] = _bal;
 			grossLiquidity_ += _bal;
 		}
-
-		return (grossLiquidity_, balances_);
 	}
 
 	function burn(

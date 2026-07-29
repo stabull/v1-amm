@@ -2,28 +2,29 @@
 pragma solidity ^0.8.10;
 
 import "forge-std/Test.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import "../../src/interfaces/IAssimilator.sol";
-import "../../src/interfaces/IOracle.sol";
-import "../../src/interfaces/IERC20Detailed.sol";
-import "../../src/AssimilatorFactory.sol";
-import "../../src/CurveFactoryV2.sol";
-import "../../src/Curve.sol";
-import "../../src/Config.sol";
-import "../../src/Structs.sol";
-import "../../src/lib/ABDKMath64x64.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import ".././lib/MockUser.sol";
-import ".././lib/CheatCodes.sol";
-import ".././lib/Address.sol";
-import ".././lib/CurveParams.sol";
-import ".././lib/MockChainlinkOracle.sol";
-import ".././lib/MockOracleFactory.sol";
-import ".././lib/MockToken.sol";
+import { IAssimilator } from "../../contracts/interfaces/IAssimilator.sol";
+import { IOracle } from "../../contracts/interfaces/IOracle.sol";
+import { IERC20Detailed } from "../../contracts/interfaces/IERC20Detailed.sol";
+import { AssimilatorFactory } from "../../contracts/AssimilatorFactory.sol";
+import { CurveFactoryV2 } from "../../contracts/CurveFactoryV2.sol";
+import { Curve } from "../../contracts/Curve.sol";
+import { Config } from "../../contracts/Config.sol";
+import { CurveInfo } from "../../contracts/Structs.sol";
+import { ABDKMath64x64 } from "../../contracts/lib/ABDKMath64x64.sol";
 
-import ".././utils/Utils.sol";
+import { MockUser } from ".././lib/MockUser.sol";
+import { CheatCodes } from ".././lib/CheatCodes.sol";
+import { Mainnet } from ".././lib/Address.sol";
+import { DefaultCurve } from ".././lib/CurveParams.sol";
+import { MockChainlinkOracle } from ".././lib/MockChainlinkOracle.sol";
+import { MockOracleFactory } from ".././lib/MockOracleFactory.sol";
+import { MockToken } from ".././lib/MockToken.sol";
+
+import { Utils } from ".././utils/Utils.sol";
 
 contract TargetSwapFeeTest is Test {
     using SafeMath for uint256;
@@ -32,7 +33,7 @@ contract TargetSwapFeeTest is Test {
 
     // account order is lp provider, trader, treasury
     MockUser[] public accounts;
-    
+
     MockOracleFactory oracleFactory;
     // token order is gold, euroc, cadc, usdc
     IERC20Detailed[] public tokens;
@@ -134,15 +135,9 @@ contract TargetSwapFeeTest is Test {
         cheats.assume(amt > 100);
         cheats.assume(amt < 10000000);
         // mint token to trader
-        deal(
-            address(tokens[1]),
-            address(accounts[1]),
-            amt * decimals[1] * 100
-        );
+        deal(address(tokens[1]), address(accounts[1]), amt * decimals[1] * 100);
 
-        uint256 eurocBalance = tokens[1].balanceOf(
-            address(accounts[1])
-        );
+        uint256 eurocBalance = tokens[1].balanceOf(address(accounts[1]));
 
         cheats.startPrank(address(accounts[1]));
         tokens[1].approve(address(curves[1]), type(uint256).max);
@@ -151,7 +146,14 @@ contract TargetSwapFeeTest is Test {
 
         // first deposit
         cheats.startPrank(address(accounts[0]));
-        curves[1].deposit(1000000000 * 1e18,0,0,type(uint256).max, type(uint256).max, block.timestamp + 60);
+        curves[1].deposit(
+            1000000000 * 1e18,
+            0,
+            0,
+            type(uint256).max,
+            type(uint256).max,
+            block.timestamp + 60
+        );
         cheats.stopPrank();
 
         uint256 forexBeforeSwap = tokens[1].balanceOf(address(accounts[1]));

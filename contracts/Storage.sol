@@ -15,8 +15,7 @@
 
 pragma solidity 0.8.19;
 
-import "./interfaces/IOracle.sol";
-import "./Assimilators.sol";
+import { IOracle } from "./interfaces/IOracle.sol";
 
 contract Storage {
 	struct Curve {

@@ -15,8 +15,8 @@
 
 pragma solidity 0.8.19;
 
-import "../assimilators/AssimilatorV2.sol";
-import "../interfaces/IOracle.sol";
+import { AssimilatorV2 } from "../assimilators/AssimilatorV2.sol";
+import { IOracle } from "../interfaces/IOracle.sol";
 
 interface IAssimilatorFactory {
 	function getAssimilator(
